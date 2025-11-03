@@ -1,0 +1,684 @@
+/* ==========================================================================
+    🎨 VARIABLES Y RESETEO GLOBAL
+    ========================================================================== */
+    :root {
+    --color-primary: #556B2F;
+    --color-dark-coffee: #2E1F18;
+    --color-tostado: #5C4A3C;
+    --color-gold: #FFD700;
+    --color-background: #F5F5DC;
+    }
+
+    html {
+    scroll-behavior: smooth;
+    }
+
+    body {
+    background-color: var(--color-background);
+    margin: 0;
+    font-family: Arial, sans-serif;
+    }
+
+    /* ==========================================================================
+    🧭 NAVBAR
+    ========================================================================== */
+    .navbar {
+    background: var(--color-primary);
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+    .navbar a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+    }
+
+    .navbar a:hover {
+    color: var(--color-gold);
+    }
+
+    .navbar-links,
+    .navbar-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    }
+
+    /* ==========================================================================
+    🔘 BOTONES PRINCIPALES
+    ========================================================================== */
+    /* Botón Registrarse */
+    .btn-registro {
+    background-color: transparent;
+    color: var(--color-gold);
+    border: 2.5px solid var(--color-gold);
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow: 0 0 0 transparent;
+    }
+
+    .btn-registro:hover,
+    .btn-registro:focus {
+    background-color: var(--color-gold);
+    color: #fff;
+    border-color: var(--color-gold);
+    box-shadow: 0 6px 14px rgba(255, 215, 0, 0.6);
+    transform: translateY(-3px);
+    outline: none;
+    }
+
+    .btn-registro:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Botón Iniciar Sesión */
+    .login-btn {
+    background-color: var(--color-tostado);
+    color: var(--color-gold);
+    border: 2px solid var(--color-gold);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    }
+
+    .login-btn:hover {
+    background-color: #3e2f24;
+    color: #FFC700;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ==========================================================================
+    🔐 MODAL DE LOGIN
+    ========================================================================== */
+    .modal-login {
+    border: none;
+    padding: 0;
+    }
+
+    .modal-login::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+    background: var(--color-tostado);
+    padding: 30px;
+    border-radius: 15px;
+    width: 320px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: var(--color-gold);
+    text-align: center;
+    }
+
+    .modal-content h2 {
+    margin-top: 0;
+    color: var(--color-gold);
+    margin-bottom: 20px;
+    }
+
+    .modal-content input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid var(--color-gold);
+    background: #fff7e6;
+    color: #2E1F18;
+    font-size: 1rem;
+    }
+
+    .modal-content button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    }
+
+    /* Cierre del modal */
+    .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--color-primary);
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+    }
+
+    .close-btn:hover {
+    color: var(--color-dark-coffee);
+    }
+
+    /* Enlace registro dentro del modal */
+    .modal-content .link-registro {
+    color: var(--color-primary);
+    font-weight: bold;
+    text-decoration: underline;
+    }
+
+    .modal-content .link-registro:hover {
+    color: #435425;
+    }
+/* ========================================================================== 
+☕ FOOTER
+========================================================================== */
+
+.main-footer {
+  background-color: var(--color-dark-coffee) !important;
+  color: #f0f0f0;
+  margin: 0;          /* elimina margen superior */
+  padding-top: 20px;  /* espaciado interno */
+  padding-bottom: 20px;
+}
+
+.main-footer .fw-bold {
+  color: #fff;
+  margin-top: 15px;
+}
+
+.main-footer a {
+  color: #f0f0f0;
+  transition: color 0.3s ease;
+}
+
+.main-footer a:hover {
+  color: #a07a67;
+}
+
+.newsletter-form input[type="email"] {
+  background-color: #4a3833;
+  color: #f0f0f0;
+  border: 1px solid #4a3833;
+}
+
+.newsletter-form button {
+  background-color: #a07a67;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  background-color: #c09a87;
+}
+
+.footer-bottom {
+  font-size: 0.85rem;
+  color: #b0b0b0;
+  margin: 0;          /* elimina margen superior e inferior */
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Ajuste del BannerGif si tiene margin-bottom */
+.banner-gif {
+  margin-bottom: 0;   /* elimina cualquier espacio inferior */
+}
+
+
+    /* ==========================================================================
+    ✉️ INPUTS DE LOGIN (EXTERNOS)
+    ========================================================================== */
+    .login-modal-input {
+    font-size: 1rem;
+    padding: 10px 13px;
+    border-radius: 8px;
+    border: 1px solid #b5b5b5;
+    background: #f5f5dc;
+    color: #222;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+    }
+
+    .login-modal-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    }
+
+    /* ==========================================================================
+    📱 RESPONSIVE
+    ========================================================================== */
+    @media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 10px;
+    }
+
+    .navbar-links,
+    .navbar-user-actions {
+        flex-direction: column;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .navbar-links a {
+        margin: 5px 0;
+    }
+
+    .main-footer .social-links {
+        justify-content: center !important;
+    }
+    }
+
+    /* ==========================================================================
+    🔒 MODAL DE LOGIN (VERSIÓN MINIMALISTA)
+    ========================================================================== */
+    .modal-login-minimalista {
+    background: #F8F9FA;
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(55, 70, 40, 0.11);
+    color: #313233;
+    padding: 2rem 2.3rem;
+    border: 1.5px solid #e3e5e9;
+    min-width: 310px;
+    max-width: 370px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .modal-login-minimalista h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.01rem;
+    color: var(--color-primary);
+    margin-bottom: 1.2rem;
+    text-align: center;
+    }
+
+    .modal-login-minimalista .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-size: 1.3rem;
+    background: transparent;
+    border: none;
+    color: var(--color-primary);
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.17s;
+    }
+
+    .modal-login-minimalista .close-btn:hover {
+    color: var(--color-tostado);
+    }
+
+    .modal-login-minimalista .btn-auth0 {
+    width: 100%;
+    background: var(--color-primary);
+    color: #fff;
+    border-radius: 0.7rem;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.7rem 0;
+    border: none;
+    margin-top: 0.7rem;
+    transition: background 0.19s;
+    box-shadow: 0 2px 7px rgba(44, 57, 31, 0.06);
+    }
+
+    .modal-login-minimalista .btn-auth0:hover {
+    background: #7aa267;
+    color: #fff;
+    }
+
+    .modal-login-minimalista .text-login-desc {
+    font-size: 0.95rem;
+    margin-top: 2.1rem;
+    color: #232322;
+    font-weight: 500;
+    text-align: center;
+    }
+
+    .modal-login-minimalista .link-registro-black {
+    color: #222 !important;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-left: 6px;
+    transition: color 0.17s;
+    }
+
+    .modal-login-minimalista .link-registro-black:hover {
+    color: var(--color-primary) !important;
+    }
+
+    @media (max-width: 510px) {
+    .modal-login-minimalista {
+        padding: 1.1rem 0.18rem;
+        min-width: 97vw;
+        max-width: 98vw;
+    }
+}
+
+/* ================================ */
+/* CARRUSEL PRINCIPAL               */
+/* ================================ */
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 86vh;
+  overflow: hidden;
+}
+
+.carousel-item {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 1.5s ease-in-out, transform 2.5s ease-in-out;
+}
+
+.carousel-item.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 1;
+}
+
+/* Overlay flotante a la izquierda y un poco más arriba */
+.overlay {
+  position: absolute;
+  top: 15%;
+  left: 5%;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  text-align: left;
+  animation: fadeInUp 1s ease forwards;
+}
+
+.text-content h2 {
+  color: #fff;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.text-content p {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.text-content button {
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  background-color: #556B2F; /* Verde militar */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.text-content button:hover {
+  background-color: #3e5423;
+}
+
+/* Animación suave de entrada */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Puntos de navegación */
+.carousel-dots {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 5;
+}
+
+.carousel-dots .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-dots .dot.active {
+  width: 14px;
+  height: 14px;
+  background: #556B2F;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .overlay {
+    width: 85%;
+    padding: 1.5rem 2rem;
+    top: 10%;
+    left: 5%;
+  }
+
+  .text-content h2 {
+    font-size: 2rem;
+  }
+
+  .text-content p {
+    font-size: 1rem;
+  }
+}
+
+/* ================================ */
+/* GRID DE CATEGORÍAS              */
+/* ================================ */
+.categorias-section {
+  padding: 30px 0;
+}
+
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.categoria-card {
+  position: relative;
+  display: block;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 250px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  text-decoration: none;
+}
+
+.categoria-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.categoria-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.categoria-card:hover img {
+  transform: scale(1.1);
+}
+
+.categoria-titulo {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px 0;
+  background: rgba(46, 31, 24, 0.7);
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  transition: background 0.3s ease;
+}
+
+.categoria-card:hover .categoria-titulo {
+  background: rgba(46, 31, 24, 0.9);
+}
+
+/* ================================ */
+/* BANNER GIF Y TEXTO              */
+/* ================================ */
+.banner-gif {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  margin-top: 50px;
+}
+
+.banner-gif img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.banner-gif-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #3e2723;
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 60%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.banner-gif-text p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* ================================ */
+/* RESPONSIVE                      */
+/* ================================ */
+@media (max-width: 600px) {
+  .categorias-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
+  }
+
+  .categoria-card {
+    height: 180px;
+  }
+
+  .categoria-titulo {
+    font-size: 0.95rem;
+    padding: 8px 0;
+  }
+
+  .banner-gif-text {
+    max-width: 80%;
+    font-size: 1rem;
+    padding: 20px;
+  }
+}
+
+/* ================================ */
+/* BANNER DE ENVÍO / SHIPPING BAR   */
+/* ================================ */
+.shipping-bar-horizontal {
+  background-color: rgba(255, 248, 230, 0.9); /* traslúcido elegante */
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+  font-weight: 500;
+  color: #3e2f24;
+  font-size: 1rem;
+  max-width: 500px;
+  margin: 10px 0 20px 20px; /* Ajuste de posición: top 10px, left 20px */
+  text-align: left;
+  overflow: hidden;
+  position: relative;
+}
+
+.shipping-bar-horizontal p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(0);
+}
+
+.shipping-bar-horizontal p strong {
+  font-weight: 700;
+  color: #556B2F; /* verde militar destacado */
+  text-transform: uppercase;
+  font-size: 1.05rem;
+}
+
+/* Animación para mensajes */
+.shipping-bar-horizontal .shipping-message {
+  opacity: 0;
+  transform: translateY(-50%) translateX(-50px);
+}
+
+.shipping-bar-horizontal .shipping-message.active {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .shipping-bar-horizontal {
+    max-width: 90%;
+    font-size: 0.95rem;
+    padding: 10px 15px;
+  }
+}

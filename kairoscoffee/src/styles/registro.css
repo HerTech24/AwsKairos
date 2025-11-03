@@ -1,0 +1,35 @@
+/* src/styles/registro.css (CORREGIDO: Centrado) */
+
+/* Estilos de color de la marca Kairós Coffee */
+.btn-kairos-primary {
+    background-color: #556B2F; 
+    border-color: #556B2F;
+    color: white;
+}
+.btn-kairos-primary:hover {
+    background-color: #435425; 
+    border-color: #435425;
+    color: white;
+}
+.text-kairos-primary {
+    color: #556B2F;
+}
+
+/* 🛑 REGLAS DE CENTRADO 🛑 */
+.registro-container {
+    background-color: #f0f4f0; 
+    
+    /* Usa Flexbox para centrar el contenido */
+    display: flex;
+    align-items: center; /* Centra verticalmente */
+    justify-content: center; /* Centra horizontalmente */
+    padding: 20px;
+}
+
+.registro-card {
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #556B2F; 
+    border-radius: 5px;
+}

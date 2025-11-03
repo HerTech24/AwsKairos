@@ -1,0 +1,192 @@
+/* ==========================================================================
+   COLORES Y UTILIDADES confirmacion.css
+   ========================================================================== */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #F5F5DC;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-custom {
+  background-color: #556B2F;
+  color: white;
+  border: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+.btn-custom:hover {
+  background-color: #435427;
+  color: white;
+}
+
+.bg-custom-dark {
+  background-color: #2E1F18 !important;
+  color: white;
+}
+
+.card {
+  border: 1px solid #DCCCA3;
+  background-color: #F5F5DC;
+}
+
+/* ==========================================================================
+   ESTILOS DE CONFIRMACIÓN
+   ========================================================================== */
+.confirmation-card {
+  max-width: 600px;
+  width: 100%;
+  background-color: #F5F5DC !important;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card h1, .card h2, .card h4 {
+  color: #2E1F18;
+  font-weight: bold;
+}
+
+.card h1 {
+  font-size: 2.5rem;
+}
+
+.card h2 {
+  font-size: 2rem;
+}
+
+.card h4 {
+  font-size: 1.4rem;
+  margin-top: 1.5rem;
+}
+
+#mensaje-dinamico {
+  color: #556B2F;
+  font-size: 1.1rem;
+}
+
+.card img {
+  max-width: 300px;
+  height: auto;
+  margin: 1rem auto;
+  display: block;
+}
+
+/* Detalles del resumen */
+.summary-details {
+  max-width: 400px;
+  margin: 20px auto;
+  text-align: left;
+}
+
+.confirmation-table {
+  font-size: 1.05rem;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.confirmation-table td {
+  padding: 6px 0;
+}
+
+.confirmation-table .total-row {
+  border-top: 2px solid #2E1F18;
+  font-size: 1.2rem;
+  color: #556B2F;
+}
+
+.confirmation-table .total-row td {
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.main-footer {
+  background-color: #2E1F18;
+  color: #f0f0f0;
+  padding: 40px 0 20px 0;
+  font-family: Arial, sans-serif;
+}
+
+.main-footer ul li a {
+  color: #f0f0f0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.main-footer ul li a:hover {
+  color: #DCCCA3;
+}
+
+.newsletter-form input[type="email"] {
+  background-color: #4a3833;
+  color: #f0f0f0;
+  border: none;
+  outline: none;
+  padding: 10px 15px;
+}
+.newsletter-form input[type="email"]::placeholder {
+  color: #b0b0b0;
+}
+.newsletter-form button {
+  background-color: #a07a67;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.newsletter-form button:hover {
+  background-color: #c09a87;
+}
+
+.social-links a img {
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+.social-links a img:hover {
+  opacity: 1;
+}
+
+.footer-bottom {
+  font-size: 0.85rem;
+  color: #b0b0b0;
+}
+
+.confirmation-page {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.confirmation-page h1 {
+  color: #2E1F18;
+  margin-bottom: 1rem;
+}
+
+.logo-confirmacion {
+  margin-top: 2rem;
+  width: 120px;
+}
+
+.confirmation-page {
+  min-height: 80vh;
+  background-color: #f0f4f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.confirmation-page h1 {
+  color: #556B2F;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.logo-confirmacion {
+  width: 120px;
+  height: auto;
+}
