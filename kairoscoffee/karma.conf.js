@@ -1,89 +1,119 @@
-// karma.conf.js
-module.exports = function (config) {
+module.exports = function(config) {
   config.set({
-    frameworks: ["jasmine"],
+    // Framework a usar
+    frameworks: ['jasmine'],
 
-    // ✅ CORRECCIÓN: Carga solo el setup y los archivos de test.
-    // Webpack se encargará de importar los componentes que esos tests necesiten.
+    // Archivos a incluir en los tests
     files: [
-      "src/tests/test-setup.js", // Carga la configuración de Jasmine primero
-      "src/tests/**/*.test.js"  // Carga todos los archivos de test
+      'src/**/*.spec.js',
+      'src/**/*.js',
+      'src/**/*.jsx'
     ],
 
-    exclude: [],
+    // Archivos a excluir
+    exclude: [
+      'src/index.js',
+      'src/reportWebVitals.js'
+    ],
 
-    // ✅ CORRECCIÓN: Aplica webpack solo a los archivos de entrada
+    // Preprocesadores
     preprocessors: {
-      "src/tests/test-setup.js": ["webpack"],
-      "src/tests/**/*.test.js": ["webpack"]
+      'src/**/*.js': ['webpack', 'coverage'],
+      'src/**/*.jsx': ['webpack', 'coverage'],
+      'src/**/*.spec.js': ['webpack']
     },
 
+    // Configuración de webpack para Karma
     webpack: {
-      mode: "development",
+      mode: 'development',
       module: {
         rules: [
           {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
             use: {
-              loader: "babel-loader",
+              loader: 'babel-loader',
               options: {
-                presets: ["@babel/preset-env", "@babel/preset-react"],
-                plugins: ["istanbul"] // Necesario para 'karma-coverage'
+                presets: [
+                  '@babel/preset-env',
+                  '@babel/preset-react'
+                ],
+                plugins: [
+                  'istanbul'
+                ]
               }
             }
           },
           {
             test: /\.css$/,
-            use: ["style-loader", "css-loader"]
-          },
-          {
-            test: /\.(png|jpg|jpeg|gif|svg)$/i,
-            type: "asset/resource"
+            use: ['style-loader', 'css-loader']
           }
         ]
       },
       resolve: {
-        extensions: [".js", ".jsx"]
+        extensions: ['.js', '.jsx']
       }
     },
 
     webpackMiddleware: {
       noInfo: true,
-      stats: "errors-only"
+      stats: 'errors-only'
     },
 
-    reporters: ["spec", "coverage"],
+    // Reporteros de test
+    reporters: ['progress', 'coverage'],
 
+    // Configuración del reporte de cobertura
     coverageReporter: {
-      dir: "coverage",
+      dir: 'coverage',
       reporters: [
-        { type: "html", subdir: "html" },
-        { type: "text-summary" },
-        { type: "lcov", subdir: "lcov" }
-      ]
-    },
-
-    browsers: ["ChromeHeadless"],
-
-    customLaunchers: {
-      ChromeHeadlessCI: {
-        base: "ChromeHeadless",
-        flags: ["--no-sandbox", "--disable-gpu"]
+        { type: 'html', subdir: 'html' },
+        { type: 'lcov', subdir: 'lcov' },
+        { type: 'text-summary' },
+        { type: 'cobertura', subdir: '.', file: 'cobertura.xml' }
+      ],
+      check: {
+        global: {
+          statements: 80,
+          branches: 50,
+          functions: 80,
+          lines: 80
+        }
       }
     },
 
-    singleRun: true, // Lo cambié a true para que coincida con tu script "test"
-    autoWatch: false,
-    concurrency: Infinity,
+    // Puerto del servidor
+    port: 9876,
+
+    // Habilitar colores en el output
+    colors: true,
+
+    // Nivel de logging
     logLevel: config.LOG_INFO,
 
-    plugins: [
-      "karma-webpack",
-      "karma-jasmine",
-      "karma-chrome-launcher",
-      "karma-coverage",
-      "karma-spec-reporter"
-    ]
+    // Habilitar watching de archivos
+    autoWatch: true,
+
+    // Navegadores para ejecutar tests
+    browsers: ['ChromeHeadless'],
+
+    // Configuración personalizada para Chrome Headless
+    customLaunchers: {
+      ChromeHeadlessCI: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox', '--disable-gpu']
+      }
+    },
+
+    // Ejecución continua
+    singleRun: false,
+
+    // Timeout
+    browserNoActivityTimeout: 30000,
+    browserDisconnectTimeout: 10000,
+    browserDisconnectTolerance: 3,
+
+    // Concurrencia
+    concurrency: Infinity
   });
 };
