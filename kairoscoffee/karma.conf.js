@@ -1,22 +1,21 @@
-// karma.conf.js
 module.exports = function (config) {
   config.set({
     // Frameworks principales
     frameworks: ["jasmine", "webpack"],
 
-    // Archivos de prueba a ejecutar
+    // Archivos de prueba (Setup primero, luego los tests)
     files: [
-      "src/**/*.spec.js",
-      "src/**/*.test.js",
+      "src/test-setup.js", 
+      "src/tests/**/*.spec.js"
     ],
 
-    // Preprocesamiento con Webpack
+    // Preprocesamiento: Webpack para el setup y los tests
     preprocessors: {
-      "src/**/*.spec.js": ["webpack", "coverage"],
-      "src/**/*.test.js": ["webpack", "coverage"],
+      "src/test-setup.js": ["webpack"],
+      "src/tests/**/*.spec.js": ["webpack", "coverage"],
     },
 
-    // Configuración de Webpack
+    // Configuración Webpack para transformar y mockear entorno reactivo
     webpack: {
       mode: "development",
       module: {
@@ -26,13 +25,8 @@ module.exports = function (config) {
             exclude: /node_modules/,
             use: {
               loader: "babel-loader",
-              options: {
-                presets: [
-                  ["@babel/preset-env", { targets: { esmodules: true } }],
-                  ["@babel/preset-react", { runtime: "automatic" }],
-                ],
-                plugins: ["istanbul"], // Necesario para reportes de cobertura
-              },
+              // Opciones de Babel eliminadas de aquí.
+              // Webpack usará automáticamente tu archivo .babelrc
             },
           },
           {
@@ -50,29 +44,29 @@ module.exports = function (config) {
       },
     },
 
-    // Reporteros de resultados
+    // Reporteadores
     reporters: ["spec", "coverage"],
 
-    // Configuración de cobertura (karma-coverage)
     coverageReporter: {
       dir: "coverage/",
       reporters: [
         { type: "html", subdir: "html" },
         { type: "lcov", subdir: "lcov" },
-        { type: "text-summary" },
+        { type: "text-summary" }
       ],
+      // Excluir los archivos de test y setup del reporte de cobertura
+      exclude: [
+          "src/tests",
+          "src/test-setup.js"
+      ]
     },
 
     browsers: ["ChromeHeadless"],
 
-    // Recomendado para CI o pruebas automatizadas
     singleRun: true,
-
-    // Mejor salida visual en consola
     colors: true,
     logLevel: config.LOG_INFO,
 
-    // Configuración adicional de Jasmine
     client: {
       jasmine: {
         random: false,
@@ -88,7 +82,7 @@ module.exports = function (config) {
       showSpecTiming: true,
     },
 
-    // Plugins necesarios
+    // Plugins necesarios (estaban bien)
     plugins: [
       "karma-webpack",
       "karma-jasmine",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react"; // 1. Importar useMemo
 import { CartContext } from "../../context/CartContext";
 
 /**
@@ -7,17 +7,23 @@ import { CartContext } from "../../context/CartContext";
  * Compatible con Karma + Jasmine + React Testing Library
  */
 const MockCartProvider = ({ children, cartValue = {} }) => {
-  const defaultValue = {
+  
+  // 2. Usar useMemo para crear un valor estable
+  // Este objeto solo se recalculará si la prop 'cartValue' cambia.
+  const providerValue = useMemo(() => ({
+    // Valores por defecto
     cartItems: [],
-    addToCart: jasmine.createSpy("addToCart"),
-    removeFromCart: jasmine.createSpy("removeFromCart"),
-    toggleCart: jasmine.createSpy("toggleCart"),
+    addToCart: jasmine.createSpy("default.addToCart"),
+    removeFromCart: jasmine.createSpy("default.removeFromCart"),
+    toggleCart: jasmine.createSpy("default.toggleCart"),
     isCartOpen: false,
-    ...cartValue, // Permite sobreescribir cualquier valor desde el test
-  };
+    
+    // 3. Sobrescribir con los valores específicos del test
+    ...cartValue, 
+  }), [cartValue]); // Dependencia: solo cambia si 'cartValue' cambia
 
   return (
-    <CartContext.Provider value={defaultValue}>
+    <CartContext.Provider value={providerValue}>
       {children}
     </CartContext.Provider>
   );

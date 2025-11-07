@@ -1,5 +1,40 @@
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
+// setupTests.js
+import { configure } from '@testing-library/react';
+import JasmineDOM from '@testing-library/jasmine-dom/dist';
+
+// Usar data-testid (ok con Jasmine/Karma)
+configure({ testIdAttribute: 'data-testid' });
+
+// Silenciar consola para que no “ensucie” el output
+global.console = {
+    ...console,
+    error: jasmine.createSpy('console.error'),
+    warn: jasmine.createSpy('console.warn'),
+};
+
+// Subir timeout global (opcional)
+beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+});
+
+// Helpers opcionales
+window.testHelpers = {
+    flushPromises: () => new Promise((r) => setTimeout(r, 0)),
+    waitForCondition: (cond, timeout = 3000) =>
+        new Promise((resolve, reject) => {
+            const step = 100;
+            let t = 0;
+            const tick = () => {
+                if (cond()) return resolve();
+                if (t >= timeout) return reject(new Error('Timeout waiting for condition'));
+                t += step;
+                setTimeout(tick, step);
+            };
+            tick();
+        }),
+};
+
+// Activar matchers de jasmine-dom
+beforeAll(() => {
+    jasmine.getEnv().addMatchers(JasmineDOM);
+});

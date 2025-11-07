@@ -15,10 +15,12 @@ describe("🧩 Slider Component (Karma + Jasmine)", () => {
   ];
 
   beforeEach(() => {
+    // Correcto: Mockear timers para cualquier setTimeout/setInterval en el slider
     jasmine.clock().install();
   });
 
   afterEach(() => {
+    // Correcto: Limpiar timers y spies
     jasmine.clock().uninstall();
     mockAgregarAlCarrito.calls.reset();
   });
@@ -28,27 +30,32 @@ describe("🧩 Slider Component (Karma + Jasmine)", () => {
   // ============================================================================
   it("renderiza correctamente todos los productos del slider", () => {
     render(<Slider items={items} agregarAlCarrito={mockAgregarAlCarrito} />);
-    expect(screen.getByText(/Café Premium/i)).toBeTruthy();
-    expect(screen.getByText(/Yerba Mate/i)).toBeTruthy();
-    expect(screen.getByText(/Té Verde/i)).toBeTruthy();
+    
+    // ✅ REFINADO: Usar matchers de jasmine-dom
+    expect(screen.getByText(/Café Premium/i)).toBeInTheDocument();
+    expect(screen.getByText(/Yerba Mate/i)).toBeInTheDocument();
+    expect(screen.getByText(/Té Verde/i)).toBeInTheDocument();
   });
 
   // ============================================================================
   // BOTONES DE DESPLAZAMIENTO
   // ============================================================================
   it("permite desplazarse a la izquierda y derecha sin errores", () => {
-    const { container } = render(
+    render(
       <Slider items={items} agregarAlCarrito={mockAgregarAlCarrito} />
     );
 
-    const prevBtn = container.querySelector(".prev");
-    const nextBtn = container.querySelector(".next");
+    // ✅ REFINADO: Usar queries accesibles (requiere aria-label en el componente)
+    const prevBtn = screen.getByRole("button", { name: /previous|anterior/i });
+    const nextBtn = screen.getByRole("button", { name: /next|siguiente/i });
 
-    expect(prevBtn).toBeTruthy();
-    expect(nextBtn).toBeTruthy();
+    expect(prevBtn).toBeInTheDocument();
+    expect(nextBtn).toBeInTheDocument();
 
     fireEvent.click(prevBtn);
     fireEvent.click(nextBtn);
+    
+    // El test pasa si los clics no lanzan un error
   });
 
   // ============================================================================
@@ -56,11 +63,14 @@ describe("🧩 Slider Component (Karma + Jasmine)", () => {
   // ============================================================================
   it("ejecuta agregarAlCarrito al hacer clic en el botón correspondiente", () => {
     render(<Slider items={items} agregarAlCarrito={mockAgregarAlCarrito} />);
+    
+    // ✅ EXCELENTE: Esta query es la correcta
     const addButtons = screen.getAllByRole("button", { name: /agregar/i });
 
     expect(addButtons.length).toBeGreaterThan(0);
     fireEvent.click(addButtons[0]);
 
+    // ✅ EXCELENTE: Matcher correcto de Jasmine
     expect(mockAgregarAlCarrito).toHaveBeenCalled();
   });
 });
