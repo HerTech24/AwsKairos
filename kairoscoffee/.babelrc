@@ -1,11 +1,11 @@
 {
   "presets": [
     ["@babel/preset-env", { "targets": { "node": "current" } }],
-    "@babel/preset-react"
+    ["@babel/preset-react", { "runtime": "automatic" }]
   ],
-  "plugins": [
-    ["istanbul", {
-      "exclude": ["**/*.test.js", "**/*.spec.js", "**/node_modules/**"]
-    }]
-  ]
+  "env": {
+    "test": {
+      "plugins": ["istanbul"]
+    }
+  }
 }

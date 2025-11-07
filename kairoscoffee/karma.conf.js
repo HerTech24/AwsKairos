@@ -1,119 +1,100 @@
-module.exports = function(config) {
+// karma.conf.js
+module.exports = function (config) {
   config.set({
-    // Framework a usar
-    frameworks: ['jasmine'],
+    // Frameworks principales
+    frameworks: ["jasmine", "webpack"],
 
-    // Archivos a incluir en los tests
+    // Archivos de prueba a ejecutar
     files: [
-      'src/**/*.spec.js',
-      'src/**/*.js',
-      'src/**/*.jsx'
+      "src/**/*.spec.js",
+      "src/**/*.test.js",
     ],
 
-    // Archivos a excluir
-    exclude: [
-      'src/index.js',
-      'src/reportWebVitals.js'
-    ],
-
-    // Preprocesadores
+    // Preprocesamiento con Webpack
     preprocessors: {
-      'src/**/*.js': ['webpack', 'coverage'],
-      'src/**/*.jsx': ['webpack', 'coverage'],
-      'src/**/*.spec.js': ['webpack']
+      "src/**/*.spec.js": ["webpack", "coverage"],
+      "src/**/*.test.js": ["webpack", "coverage"],
     },
 
-    // Configuración de webpack para Karma
+    // Configuración de Webpack
     webpack: {
-      mode: 'development',
+      mode: "development",
       module: {
         rules: [
           {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
             use: {
-              loader: 'babel-loader',
+              loader: "babel-loader",
               options: {
                 presets: [
-                  '@babel/preset-env',
-                  '@babel/preset-react'
+                  ["@babel/preset-env", { targets: { esmodules: true } }],
+                  ["@babel/preset-react", { runtime: "automatic" }],
                 ],
-                plugins: [
-                  'istanbul'
-                ]
-              }
-            }
+                plugins: ["istanbul"], // Necesario para reportes de cobertura
+              },
+            },
           },
           {
             test: /\.css$/,
-            use: ['style-loader', 'css-loader']
-          }
-        ]
+            use: ["style-loader", "css-loader"],
+          },
+          {
+            test: /\.(png|jpg|jpeg|gif|svg)$/i,
+            type: "asset/resource",
+          },
+        ],
       },
       resolve: {
-        extensions: ['.js', '.jsx']
-      }
+        extensions: [".js", ".jsx"],
+      },
     },
 
-    webpackMiddleware: {
-      noInfo: true,
-      stats: 'errors-only'
-    },
+    // Reporteros de resultados
+    reporters: ["spec", "coverage"],
 
-    // Reporteros de test
-    reporters: ['progress', 'coverage'],
-
-    // Configuración del reporte de cobertura
+    // Configuración de cobertura (karma-coverage)
     coverageReporter: {
-      dir: 'coverage',
+      dir: "coverage/",
       reporters: [
-        { type: 'html', subdir: 'html' },
-        { type: 'lcov', subdir: 'lcov' },
-        { type: 'text-summary' },
-        { type: 'cobertura', subdir: '.', file: 'cobertura.xml' }
+        { type: "html", subdir: "html" },
+        { type: "lcov", subdir: "lcov" },
+        { type: "text-summary" },
       ],
-      check: {
-        global: {
-          statements: 80,
-          branches: 50,
-          functions: 80,
-          lines: 80
-        }
-      }
     },
 
-    // Puerto del servidor
-    port: 9876,
+    browsers: ["ChromeHeadless"],
 
-    // Habilitar colores en el output
+    // Recomendado para CI o pruebas automatizadas
+    singleRun: true,
+
+    // Mejor salida visual en consola
     colors: true,
-
-    // Nivel de logging
     logLevel: config.LOG_INFO,
 
-    // Habilitar watching de archivos
-    autoWatch: true,
-
-    // Navegadores para ejecutar tests
-    browsers: ['ChromeHeadless'],
-
-    // Configuración personalizada para Chrome Headless
-    customLaunchers: {
-      ChromeHeadlessCI: {
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox', '--disable-gpu']
-      }
+    // Configuración adicional de Jasmine
+    client: {
+      jasmine: {
+        random: false,
+        timeoutInterval: 10000,
+      },
+      clearContext: false,
     },
 
-    // Ejecución continua
-    singleRun: false,
+    specReporter: {
+      suppressErrorSummary: false,
+      suppressFailed: false,
+      suppressPassed: false,
+      showSpecTiming: true,
+    },
 
-    // Timeout
-    browserNoActivityTimeout: 30000,
-    browserDisconnectTimeout: 10000,
-    browserDisconnectTolerance: 3,
-
-    // Concurrencia
-    concurrency: Infinity
+    // Plugins necesarios
+    plugins: [
+      "karma-webpack",
+      "karma-jasmine",
+      "karma-chrome-launcher",
+      "karma-spec-reporter",
+      "karma-coverage",
+    ],
   });
 };

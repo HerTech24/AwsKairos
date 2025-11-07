@@ -1,74 +1,96 @@
-// src/tests/components/Navbar.spec.js
+/**
+ * Test de Navbar adaptado para Karma + Jasmine + React 18
+ * Compatible con @testing-library/react y Auth0
+ */
 
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+
+// 🔥 Mock manual de @auth0/auth0-react para Karma + Jasmine (sin Jest)
+let mockLogin, mockLogout, mockUser, mockIsAuthenticated;
+
+// Creamos un objeto que emula el módulo
+const mockAuth0 = {
+  useAuth0: () => ({
+    isAuthenticated: mockIsAuthenticated,
+    user: mockUser,
+    loginWithRedirect: mockLogin,
+    logout: mockLogout,
+  }),
+};
+
+// Registramos el mock globalmente ANTES de importar el componente
+// Esto sobrescribe la importación ESM para el bundle de Webpack/Karma
+// eslint-disable-next-line no-undef
+__webpack_require__.c[
+  __webpack_require__.resolve
+    ? __webpack_require__.resolve("@auth0/auth0-react")
+    : Object.keys(__webpack_require__.c).find((k) =>
+        k.includes("@auth0/auth0-react")
+      )
+] = { exports: mockAuth0 };
+
 import Navbar from "../../components/Navbar";
-import { useAuth0 } from "@auth0/auth0-react";
-import { MemoryRouter } from "react-router-dom";
-import { useCarrito } from "../../context/CarritoContext";
 
-// Mock de dependencias
-jest.mock("@auth0/auth0-react");
-jest.mock("react-router-dom", () => ({
-    ...jest.requireActual("react-router-dom"),
-    useNavigate: () => jest.fn(),
-    }));
-    jest.mock("../../context/CarritoContext");
+describe("Navbar Component (adaptado a Jasmine y Karma)", () => {
+  beforeEach(() => {
+    mockLogin = jasmine.createSpy("loginWithRedirect");
+    mockLogout = jasmine.createSpy("logout");
+    mockUser = null;
+    mockIsAuthenticated = false;
+  });
 
-    describe("Navbar Component", () => {
-    let mockLogin, mockLogout, mockToggleCart;
+  // ============================================================================
+  // TESTS DE RENDERIZADO
+  // ============================================================================
+  it("renderiza el nombre del sitio correctamente", () => {
+    render(<Navbar />);
+    expect(screen.getByText(/Kairos Coffee/i)).toBeTruthy();
+  });
 
-    beforeEach(() => {
-        mockLogin = jasmine.createSpy("loginWithRedirect");
-        mockLogout = jasmine.createSpy("logout");
-        mockToggleCart = jasmine.createSpy("toggleCart");
+  it("muestra botones de inicio de sesión y registro cuando no autenticado", () => {
+    render(<Navbar />);
+    expect(screen.getByText("Iniciar sesión")).toBeTruthy();
+    expect(screen.getByText("Registrarse")).toBeTruthy();
+  });
 
-        useAuth0.and.returnValue({
-        isAuthenticated: false,
-        user: { name: "Test User" },
-        loginWithRedirect: mockLogin,
-        logout: mockLogout,
-        });
+  it("ejecuta loginWithRedirect al hacer clic en 'Iniciar sesión'", () => {
+    render(<Navbar />);
+    fireEvent.click(screen.getByText("Iniciar sesión"));
+    expect(mockLogin).toHaveBeenCalled();
+  });
 
-        useCarrito.and.returnValue({
-        carrito: [],
-        toggleCart: mockToggleCart,
-        });
-    });
+  // ============================================================================
+  // TESTS CON USUARIO AUTENTICADO
+  // ============================================================================
+  it("muestra el saludo cuando el usuario está autenticado", () => {
+    mockIsAuthenticated = true;
+    mockUser = { name: "Hernán Lippke" };
 
-    it("renderiza el nombre del sitio", () => {
-        render(<Navbar />, { wrapper: MemoryRouter });
-        expect(screen.getByText(/Kairos Coffee/i)).toBeTruthy();
-    });
+    render(<Navbar />);
+    expect(screen.getByText(/Hola, Hernán Lippke/i)).toBeTruthy();
+  });
 
-    it("muestra botones de inicio de sesión y registro cuando no autenticado", () => {
-        render(<Navbar />, { wrapper: MemoryRouter });
-        expect(screen.getByText(/REGISTRARSE/i)).toBeTruthy();
-        expect(screen.getByText(/INICIAR SESIÓN/i)).toBeTruthy();
-    });
+  it("ejecuta logout al hacer clic en 'Cerrar sesión'", () => {
+    mockIsAuthenticated = true;
+    mockUser = { name: "Hernán Lippke" };
 
-    it("ejecuta loginWithRedirect al hacer clic en iniciar sesión", () => {
-        render(<Navbar />, { wrapper: MemoryRouter });
-        fireEvent.click(screen.getByText(/INICIAR SESIÓN/i));
-        expect(mockLogin).toHaveBeenCalled();
-    });
+    render(<Navbar />);
+    fireEvent.click(screen.getByText("Cerrar sesión"));
+    expect(mockLogout).toHaveBeenCalled();
+  });
 
-    it("ejecuta toggleCart al hacer clic en el botón del carrito", () => {
-        render(<Navbar />, { wrapper: MemoryRouter });
-        const cartButton = screen.getByRole("button", { name: /Abrir carrito/i });
-        fireEvent.click(cartButton);
-        expect(mockToggleCart).toHaveBeenCalled();
-    });
+  // ============================================================================
+  // TEST DEL BOTÓN DEL CARRITO
+  // ============================================================================
+  it("ejecuta toggleCart al hacer clic en el botón del carrito", () => {
+    const toggleCart = jasmine.createSpy("toggleCart");
+    render(<Navbar toggleCart={toggleCart} carrito={[]} />);
 
-    it("muestra el saludo cuando el usuario está autenticado", () => {
-        useAuth0.and.returnValue({
-        isAuthenticated: true,
-        user: { name: "Carlos" },
-        logout: mockLogout,
-        loginWithRedirect: mockLogin,
-        });
-
-        render(<Navbar />, { wrapper: MemoryRouter });
-        expect(screen.getByText(/Hola, Carlos/i)).toBeTruthy();
-    });
+    const botonCarrito =
+      screen.getByRole("button", { name: /carrito/i }) ||
+      screen.getByText(/carrito/i);
+    fireEvent.click(botonCarrito);
+    expect(toggleCart).toHaveBeenCalled();
+  });
 });
