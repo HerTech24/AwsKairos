@@ -4,10 +4,10 @@ module.exports = function (config) {
     frameworks: ["jasmine", "webpack"],
 
     // Archivos de prueba (Setup primero, luego los tests)
-    files: [
+        files: [
       "src/test-setup.js", 
       "src/tests/**/*.spec.js"
-    ],
+      ],
 
     // Preprocesamiento: Webpack para el setup y los tests
     preprocessors: {

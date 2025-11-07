@@ -1,5 +1,5 @@
 // 1. Importación simplificada de jasmine-dom
-// Esto carga y registra automáticamente los matchers (ej: .toBeInTheDocument())
+// ESTA LÍNEA DEBE SER LA PRIMERA
 import '@testing-library/jasmine-dom';
 
 import { configure } from '@testing-library/react';
@@ -35,6 +35,3 @@ window.testHelpers = {
             tick();
         }),
 };
-
-// Se elimina el 'beforeAll' que agregaba los matchers,
-// ya que la importación de '@testing-library/jasmine-dom' lo hace solo.

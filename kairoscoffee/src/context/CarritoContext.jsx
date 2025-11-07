@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-const CarritoContext = createContext();
+// ✅ ÚNICO CAMBIO REQUERIDO:
+// Añadimos 'export' para que los tests puedan importar el Contexto.
+export const CarritoContext = createContext();
+
 export const useCarrito = () => useContext(CarritoContext);
 
 export const CarritoProvider = ({ children }) => {

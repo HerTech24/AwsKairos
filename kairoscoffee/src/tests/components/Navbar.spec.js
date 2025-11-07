@@ -1,87 +1,90 @@
 /**
  * Test de Navbar adaptado para Karma + Jasmine + React 18
- * Usando el patrón "wrapper" para mockear contextos (Auth0 y Cart)
+ * * ✅ VERSIÓN DEFINITIVA:
+ * Mockea los 3 contextos requeridos (Auth0, Carrito, Router)
+ * usando sus .Provider directos, sin lógica externa.
  */
 
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 
-// 1. Importa el provider REAL de Auth0 y tu MOCK de Cart
-import { Auth0Provider } from "@auth0/auth0-react";
-import { MockCartProvider } from "../utils/MockCartProvider"; // ¡Asegúrate que la ruta sea correcta!
+// 1. Importar los CONTEXTOS, no los Providers
+import { Auth0Context } from "@auth0/auth0-react";
+import { CarritoContext } from "../../context/CarritoContext"; 
+import { MemoryRouter } from 'react-router-dom';
+
 import Navbar from "../../components/Navbar";
 
-// 2. Define tus spies de Jasmine en un scope global del describe
+// Spies de Jasmine (definidos fuera del helper)
 let mockLogin;
 let mockLogout;
-let mockToggleCart; // Spy para el carrito
+let mockToggleCart;
 
 /**
  * 3. Crea tu "Helper de Render"
  * Esta función envuelve el componente en TODOS los providers que necesita.
- * Podemos pasarle estado inicial a los mocks.
  */
 const renderWithProviders = (
   ui,
   {
     isAuthenticated = false,
     user = null,
-    cartState = { carrito: [], toggleCart: mockToggleCart },
+    cartState = {}, 
   } = {}
 ) => {
-  // Reiniciamos los spies aquí para que estén listos para cada test
+  // 2. Crear los spies NUEVOS para cada test
   mockLogin = jasmine.createSpy("loginWithRedirect");
   mockLogout = jasmine.createSpy("logout");
+  mockToggleCart = jasmine.createSpy("toggleCart");
 
-  // Si no se pasa un spy, creamos uno por defecto
-  if (!cartState.toggleCart) {
-    cartState.toggleCart = jasmine.createSpy("toggleCart");
-  }
-  mockToggleCart = cartState.toggleCart; // Actualizamos la referencia global
+  // 3. Crear el valor mock para Auth0Context
+  const mockAuth0Value = {
+    isAuthenticated,
+    user,
+    loginWithRedirect: mockLogin,
+    logout: mockLogout,
+  };
 
-  // 👇 Aquí está la magia:
-  // En lugar de mockear el 'import', mockeamos el 'Provider'
-  // dándole un estado falso y spies falsos.
+  // 4. Crear el valor mock para CarritoContext
+  const mockCarritoValue = {
+    carrito: [],
+    isCartOpen: false,
+    toggleCart: mockToggleCart,
+    ...cartState, 
+  };
+
+  // 5. Renderizar con los .Provider de contexto mockeados
   return render(
-    <Auth0Provider
-      domain="mock.auth0.com"
-      clientId="mock_client_id"
-      authorizationParams={{ redirect_uri: window.location.origin }}
-      // Sobrescribimos el estado interno para este test
-      useAuth0={() => ({
-        isAuthenticated: isAuthenticated,
-        user: user,
-        loginWithRedirect: mockLogin,
-        logout: mockLogout,
-      })}
-    >
-      <MockCartProvider {...cartState}>{ui}</MockCartProvider>
-    </Auth0Provider>
+    <Auth0Context.Provider value={mockAuth0Value}>
+      <CarritoContext.Provider value={mockCarritoValue}>
+        <MemoryRouter>
+          {ui}
+        </MemoryRouter>
+      </CarritoContext.Provider>
+    </Auth0Context.Provider>
   );
 };
 
-// 4. Tus tests ahora son limpios y legibles
+
 describe("Navbar Component (adaptado a Jasmine y Karma)", () => {
-  // No necesitas beforeEach/afterEach para resetear spies
-  // si 'renderWithProviders' los crea nuevos cada vez.
 
   it("renderiza el nombre del sitio correctamente", () => {
     renderWithProviders(<Navbar />);
-    // ✅ Mejor asersión: usa .toBeInTheDocument() (de jasmine-dom)
     expect(screen.getByText(/Kairos Coffee/i)).toBeInTheDocument();
   });
 
   it("muestra botones de inicio de sesión y registro cuando no autenticado", () => {
     renderWithProviders(<Navbar />, { isAuthenticated: false });
-    expect(screen.getByText("Iniciar sesión")).toBeInTheDocument();
-    expect(screen.getByText("Registrarse")).toBeInTheDocument();
+    expect(screen.getByText(/iniciar sesión/i)).toBeInTheDocument();
+    expect(screen.getByText(/registrarse/i)).toBeInTheDocument();
   });
 
   it("ejecuta loginWithRedirect al hacer clic en 'Iniciar sesión'", () => {
     renderWithProviders(<Navbar />, { isAuthenticated: false });
-    fireEvent.click(screen.getByText("Iniciar sesión"));
     
-    // ✅ Asersión correcta
+    fireEvent.click(screen.getByText(/iniciar sesión/i));
+    
+    // Ahora 'mockLogin' es el spy que pasamos al contexto
     expect(mockLogin).toHaveBeenCalled();
   });
 
@@ -91,7 +94,6 @@ describe("Navbar Component (adaptado a Jasmine y Karma)", () => {
       isAuthenticated: true,
       user: mockUser,
     });
-    
     expect(screen.getByText(/Hola, Hernán Lippke/i)).toBeInTheDocument();
   });
 
@@ -101,22 +103,17 @@ describe("Navbar Component (adaptado a Jasmine y Karma)", () => {
       isAuthenticated: true,
       user: mockUser,
     });
-
-    fireEvent.click(screen.getByText("Cerrar sesión"));
+    fireEvent.click(screen.getByText(/cerrar sesión/i));
     expect(mockLogout).toHaveBeenCalled();
   });
 
   it("ejecuta toggleCart al hacer clic en el botón del carrito", () => {
-    // El spy se crea y pasa automáticamente por nuestro helper
+    // El spy 'mockToggleCart' se crea y pasa automáticamente
     renderWithProviders(<Navbar />);
 
-    const botonCarrito =
-      screen.getByRole("button", { name: /carrito/i }) ||
-      screen.getByText(/carrito/i);
-    
+    const botonCarrito = screen.getByRole("button", { name: /abrir carrito/i });
     fireEvent.click(botonCarrito);
     
-    // Verificamos el spy que nuestro helper creó
     expect(mockToggleCart).toHaveBeenCalled();
   });
 });
