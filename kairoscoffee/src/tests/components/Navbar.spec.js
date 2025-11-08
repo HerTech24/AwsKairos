@@ -38,6 +38,7 @@ const renderWithProviders = (
   mockToggleCart = jasmine.createSpy("toggleCart");
 
   // 3. Crear el valor mock para Auth0Context
+  // ESTO EVITA EL 'full page reload'
   const mockAuth0Value = {
     isAuthenticated,
     user,
@@ -108,7 +109,6 @@ describe("Navbar Component (adaptado a Jasmine y Karma)", () => {
   });
 
   it("ejecuta toggleCart al hacer clic en el botón del carrito", () => {
-    // El spy 'mockToggleCart' se crea y pasa automáticamente
     renderWithProviders(<Navbar />);
 
     const botonCarrito = screen.getByRole("button", { name: /abrir carrito/i });
