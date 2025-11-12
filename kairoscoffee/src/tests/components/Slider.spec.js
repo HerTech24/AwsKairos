@@ -47,4 +47,10 @@ describe("🧩 Slider Component (Jasmine + Karma)", () => {
     fireEvent.click(addButtons[0]);
     expect(mockAgregarAlCarrito).toHaveBeenCalled();
   });
+
+  it("muestra mensaje vacío si no hay productos", () => {
+    render(<Slider items={[]} agregarAlCarrito={mockAgregarAlCarrito} />);
+    const emptyMessage = screen.queryByText(/no hay productos/i);
+    expect(emptyMessage).toBeDefined();
+  });
 });

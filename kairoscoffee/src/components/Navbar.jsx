@@ -4,10 +4,21 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useCarrito } from "../context/CarritoContext";
 import "../styles/navbar.css";
 
-const Navbar = () => {
-  const { isAuthenticated, user, logout, loginWithRedirect } = useAuth0();
-  const { carrito, toggleCart } = useCarrito();
-  const navigate = useNavigate();
+const Navbar = ({ 
+  onProfileClick = () => window.location.reload(),
+  auth0Hook = null,
+  carritoHook = null,
+  navigateHook = null
+}) => {
+  // Usar hooks inyectados o los reales
+  const auth0Real = useAuth0();
+  const carritoReal = useCarrito();
+  const navigateReal = useNavigate();
+
+  const { isAuthenticated, user, logout, loginWithRedirect } = auth0Hook || auth0Real;
+  const { carrito, toggleCart } = carritoHook || carritoReal;
+  const navigate = navigateHook || navigateReal;
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogin = () => {
@@ -40,7 +51,7 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             <span className="navbar-user">👋 Hola, {user?.name || "Usuario"}</span>
-            <button className="btn-profile" onClick={() => window.location.reload()}>
+            <button className="btn-profile" onClick={onProfileClick}>
               PERFIL
             </button>
             <button className="btn-logout" onClick={() => logout({ returnTo: window.location.origin })}>
@@ -58,7 +69,12 @@ const Navbar = () => {
           </>
         )}
 
-        <button className="btn-cart" onClick={toggleCart} aria-label="Abrir carrito">
+        <button 
+          className="btn-cart" 
+          onClick={toggleCart} 
+          aria-label="Abrir carrito"
+          data-testid="cart-button"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
             <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 
               2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 
@@ -72,7 +88,6 @@ const Navbar = () => {
           <span className="cart-count">{carrito?.length || 0}</span>
         </button>
 
-        {/* Botón hamburguesa al final */}
         <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menú">
           <span></span>
           <span></span>

@@ -1,26 +1,21 @@
-/**
- * karma.conf.js
- * Configuración 100% Karma + Jasmine para React 18 + Babel + Auth0
- */
-
 module.exports = function (config) {
   config.set({
-    // Frameworks base
+    // Frameworks principales
     frameworks: ["jasmine", "webpack"],
 
-    files: [
-      'src/setupTests.js',
-      'src/tests/**/*.spec.js',
-      'src/tests/**/*.spec.jsx'
-    ],
+    // Archivos de prueba (Setup primero, luego los tests)
+        files: [
+      "src/test-setup.js", 
+      "src/tests/**/*.spec.js"
+      ],
 
+    // Preprocesamiento: Webpack para el setup y los tests
     preprocessors: {
-      'src/setupTests.js': ['webpack'],
-      'src/tests/**/*.spec.js': ['webpack'],
-      'src/tests/**/*.spec.jsx': ['webpack']
+      "src/test-setup.js": ["webpack"],
+      "src/tests/**/*.spec.js": ["webpack", "coverage"],
     },
 
-    // Configuración de Webpack
+    // Configuración Webpack para transformar y mockear entorno reactivo
     webpack: {
       mode: "development",
       module: {
@@ -30,6 +25,8 @@ module.exports = function (config) {
             exclude: /node_modules/,
             use: {
               loader: "babel-loader",
+              // Opciones de Babel eliminadas de aquí.
+              // Webpack usará automáticamente tu archivo .babelrc
             },
           },
           {
@@ -44,16 +41,10 @@ module.exports = function (config) {
       },
       resolve: {
         extensions: [".js", ".jsx"],
-        fallback: {
-          // Evita errores con dependencias Auth0 o Node internals
-          fs: false,
-          path: false,
-          os: false,
-        },
       },
     },
 
-    // Reporters
+    // Reporteadores
     reporters: ["spec", "coverage"],
 
     coverageReporter: {
@@ -61,13 +52,13 @@ module.exports = function (config) {
       reporters: [
         { type: "html", subdir: "html" },
         { type: "lcov", subdir: "lcov" },
-        { type: "text-summary" },
+        { type: "text-summary" }
       ],
+      // Excluir los archivos de test y setup del reporte de cobertura
       exclude: [
-        "src/tests",
-        "src/test-setup.js",
-        "src/setupTests.js",
-      ],
+          "src/tests",
+          "src/test-setup.js"
+      ]
     },
 
     browsers: ["ChromeHeadless"],
@@ -91,6 +82,7 @@ module.exports = function (config) {
       showSpecTiming: true,
     },
 
+    // Plugins necesarios (estaban bien)
     plugins: [
       "karma-webpack",
       "karma-jasmine",
