@@ -58,9 +58,19 @@ module.exports = function (config) {
       exclude: [
           "src/tests",
           "src/test-setup.js"
-      ]
-    },
+      ],
 
+      check: {
+        global: {
+          statements: 100,
+          branches: 50,
+          functions: 100,
+          lines: 100
+        }
+      }
+
+    },
+    
     browsers: ["ChromeHeadless"],
 
     singleRun: true,
