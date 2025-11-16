@@ -4,6 +4,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useCarrito } from "../context/CarritoContext";
 import "../styles/navbar.css";
 
+
+
 const Navbar = ({ 
   onProfileClick = () => window.location.reload(),
   auth0Hook = null,
@@ -21,9 +23,13 @@ const Navbar = ({
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleLogin = () => {
-    loginWithRedirect({ connection: "google-oauth2" });
-  };
+  const handleLogin = async () => {
+  await loginWithRedirect({
+    connection: "google-oauth2",
+  });
+
+  // Después del redirect, Auth0Provider procesa el login
+};
 
   const irACategoria = (categoria) => {
     navigate(`/productos?categoria=${categoria}`);

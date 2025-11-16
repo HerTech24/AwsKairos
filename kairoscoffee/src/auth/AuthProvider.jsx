@@ -2,10 +2,11 @@
 import React from "react";
 import { Auth0Provider } from "@auth0/auth0-react";
 
-const domain = "dev-zjxrrfutupruimyb.us.auth0.com";
-const clientId = "sAGxMf8Tco0tNtPpvhaarafeiBvigsJv";
-
 export const AuthProvider = ({ children }) => {
+  const domain = process.env.REACT_APP_AUTH0_DOMAIN;
+  const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+  const redirectUri = process.env.REACT_APP_AUTH0_REDIRECT_URI;
+
   const onRedirectCallback = (appState) => {
     window.history.replaceState({}, document.title, appState?.returnTo || "/");
   };
@@ -14,7 +15,9 @@ export const AuthProvider = ({ children }) => {
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{ redirect_uri: window.location.origin }}
+      authorizationParams={{
+        redirect_uri: redirectUri,
+      }}
       onRedirectCallback={onRedirectCallback}
       cacheLocation="localstorage"
     >

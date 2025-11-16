@@ -1,9 +1,8 @@
 // src/App.jsx
 import React from "react";
-import { Routes, Route } from "react-router-dom"; // ✅ solo importa Routes
+import { Routes, Route } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./styles/global.css";
-
 
 // Páginas implementadas
 import Home from "./pages/Home";
@@ -20,7 +19,14 @@ import { CarritoProvider } from "./context/CarritoContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
+// ⬅️ IMPORTA EL HOOK QUE SINCRONIZA Auth0 → Backend
+import { useAuthBackend } from "./auth/useAuthBackend";
+
 const App = () => {
+
+  // ⬅️ ACTIVA LA SINCRONIZACIÓN AUTOMÁTICA
+  useAuthBackend();
+
   return (
     <CarritoProvider>
       <Navbar />
