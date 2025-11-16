@@ -4,15 +4,13 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useCarrito } from "../context/CarritoContext";
 import "../styles/navbar.css";
 
-
-
 const Navbar = ({ 
   onProfileClick = () => window.location.reload(),
   auth0Hook = null,
   carritoHook = null,
   navigateHook = null
 }) => {
-  // Usar hooks inyectados o los reales
+
   const auth0Real = useAuth0();
   const carritoReal = useCarrito();
   const navigateReal = useNavigate();
@@ -23,13 +21,15 @@ const Navbar = ({
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleLogin = async () => {
-  await loginWithRedirect({
-    connection: "google-oauth2",
-  });
+  // === LOGIN LOCAL ===
+  const backendAccessToken = localStorage.getItem("accessToken");
+  const localUser = JSON.parse(localStorage.getItem("userData"));
 
-  // Después del redirect, Auth0Provider procesa el login
-};
+  const handleLogin = async () => {
+    await loginWithRedirect({
+      connection: "google-oauth2",
+    });
+  };
 
   const irACategoria = (categoria) => {
     navigate(`/productos?categoria=${categoria}`);
@@ -54,13 +54,32 @@ const Navbar = ({
       </div>
 
       <div className="navbar-actions">
-        {isAuthenticated ? (
+        {isAuthenticated || backendAccessToken ? (
           <>
-            <span className="navbar-user">👋 Hola, {user?.name || "Usuario"}</span>
+            <span className="navbar-user">
+              👋 Hola, {user?.name || localUser?.nombre || "Usuario"}
+            </span>
+
             <button className="btn-profile" onClick={onProfileClick}>
               PERFIL
             </button>
-            <button className="btn-logout" onClick={() => logout({ returnTo: window.location.origin })}>
+
+            <button
+              className="btn-logout"
+              onClick={() => {
+                // LOGOUT LOCAL
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("userData");
+
+                // LOGOUT SOCIAL
+                if (isAuthenticated) {
+                  logout({ returnTo: window.location.origin });
+                } else {
+                  window.location.reload();
+                }
+              }}
+            >
               CERRAR SESIÓN
             </button>
           </>
@@ -69,7 +88,8 @@ const Navbar = ({
             <button className="btn-registro-navbar" onClick={() => navigate("/registro")}>
               REGISTRARSE
             </button>
-            <button className="btn-login-navbar" onClick={handleLogin}>
+
+            <button className="btn-login-navbar" onClick={() => navigate("/login")}>
               INICIAR SESIÓN
             </button>
           </>
@@ -77,7 +97,7 @@ const Navbar = ({
 
         <button 
           className="btn-cart" 
-          onClick={toggleCart} 
+          onClick={toggleCart}
           aria-label="Abrir carrito"
           data-testid="cart-button"
         >

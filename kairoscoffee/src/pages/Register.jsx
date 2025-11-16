@@ -1,124 +1,115 @@
-// src/pages/Register.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../styles/registro.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/registro.css";
+import { useAuth0 } from "@auth0/auth0-react";
+import LogoKairos from "../assets/img/Logo_KairosCoffee.png";
 
 const Register = () => {
-    const [formData, setFormData] = useState({
-        nombre: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    });
+    const [nombre, setNombre] = useState("");
+    const [email, setEmail]     = useState("");
+    const [password, setPassword] = useState("");
+    const [alert, setAlert] = useState(null);
 
-    const [alert, setAlert] = useState({ show: false, type: '', message: '' });
     const navigate = useNavigate();
+    const { loginWithRedirect } = useAuth0();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setAlert({ show: false, type: '', message: '' });
+        setAlert(null);
 
-        const { nombre, email, password, confirmPassword } = formData;
+        try {
+            const res = await fetch("http://localhost:8080/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nombre, email, password }),
+            });
 
-        if (password !== confirmPassword) {
-            setAlert({ show: true, type: 'alert-danger', message: 'Las contraseñas no coinciden.' });
-            return;
+            if (!res.ok) throw new Error("Error en el registro");
+
+            setAlert({ type: "success", message: "Registro exitoso. Redirigiendo..." });
+
+            setTimeout(() => navigate("/login"), 1200);
+        } catch {
+            setAlert({ type: "danger", message: "No se pudo registrar. Intenta nuevamente." });
         }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setAlert({ show: true, type: 'alert-danger', message: 'Correo inválido.' });
-            return;
-        }
-
-        console.log('Usuario Registrado:', nombre, email);
-
-        setAlert({
-            show: true,
-            type: 'alert-success',
-            message: `¡Registro exitoso! Bienvenido(a) ${nombre}. Redirigiendo...`
-        });
-
-        setTimeout(() => {
-            navigate('/');
-        }, 2000);
     };
 
     return (
-        <main className="registro-container flex-grow-1">
-            <div className="card registro-card p-4 p-md-5">
-                <h2 className="card-title text-center mb-4 fw-bold text-kairos-primary">
-                    Crear Cuenta Kairós Coffee
-                </h2>
-                <form id="registroForm" onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label htmlFor="nombre" className="form-label">Nombre Completo</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="nombre"
-                            required
-                            value={formData.nombre}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="email"
-                            required
-                            value={formData.email}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Contraseña</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="password"
-                            required
-                            minLength="6"
-                            value={formData.password}
-                            onChange={handleChange}
-                            autoComplete="new-password"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="confirmPassword"
-                            required
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            autoComplete="new-password"
-                        />
-                    </div>
+        <main className="registro-bg">
+            <div className="registro-card">
 
-                    {alert.show && (
-                        <div className={`alert ${alert.type}`} role="alert">
-                            {alert.message}
-                        </div>
-                    )}
+                {/* LOGO */}
+                <img 
+                    src={LogoKairos}
+                    alt="Logo Kairos Coffee"
+                    className="auth0-logo"
+                />
 
-                    <button type="submit" className="btn btn-kairos-primary w-100 fw-bold">
-                        REGISTRARSE
+                {/* TÍTULOS */}
+                <h2 className="registro-title">Crear Cuenta</h2>
+                <p className="registro-subtitle">
+                    "Sabores que llegan en el momento justo"
+                </p>
+
+                {/* ALERTA */}
+                {alert && (
+                    <div className={`registro-alert ${alert.type}`}>
+                        {alert.message}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="registro-form">
+                    <label className="registro-label">Nombre</label>
+                    <input
+                        type="text"
+                        className="registro-input"
+                        required
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                    />
+
+                    <label className="registro-label">Email</label>
+                    <input
+                        type="email"
+                        className="registro-input"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+
+                    <label className="registro-label">Contraseña</label>
+                    <input
+                        type="password"
+                        className="registro-input"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    <button className="registro-btn-primary" type="submit">
+                        Crear Cuenta
                     </button>
-
-                    <hr />
-
-                    <p className="text-center mt-3">
-                        ¿Ya tienes cuenta? <a href="/" className="text-kairos-primary">Inicia Sesión</a>
-                    </p>
                 </form>
+
+                {/* DIVISOR */}
+                <div className="registro-divider">
+                    <span>o</span>
+                </div>
+
+                {/* GOOGLE LOGIN */}
+                <button
+                    className="registro-btn-google"
+                    onClick={() =>
+                        loginWithRedirect({ connection: "google-oauth2" })
+                    }
+                >
+                    <img 
+                        src="https://tse4.mm.bing.net/th/id/OIP.qtXzOmjqkgkp0yLndNO0CQHaHa?pid=Api&P=0&h=180" 
+                        alt="Google" 
+                        className="google-icon" 
+                    />
+                    Registrarse con Google
+                </button>
             </div>
         </main>
     );

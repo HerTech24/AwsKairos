@@ -11,6 +11,7 @@ import ContactPage from "./pages/ContactPage";
 import ProductosPage from "./pages/ProductosPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import LoginPage from "./pages/LoginPage";
 
 // Contexto del carrito
 import { CarritoProvider } from "./context/CarritoContext";
@@ -33,6 +34,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/registro" element={<Register />} />
+        <Route path="/login" element={<LoginPage />} />   {/* ← AÑADIR */}
         <Route path="/contacto" element={<ContactPage />} />
         <Route path="/productos" element={<ProductosPage />} />
         <Route path="/confirmation" element={<ConfirmationPage />} />
