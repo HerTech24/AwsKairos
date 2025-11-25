@@ -512,6 +512,7 @@
 }
 
 .categorias-grid {
+  
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 25px;
@@ -520,6 +521,7 @@
 
 .categoria-card {
   position: relative;
+  
   display: block;
   border-radius: 20px;
   overflow: hidden;
@@ -551,7 +553,7 @@
   bottom: 0;
   width: 100%;
   padding: 10px 0;
-  background: rgba(46, 31, 24, 0.7);
+  background-color: #2e4b2e;
   color: #fff;
   font-weight: bold;
   text-align: center;
