@@ -1,12 +1,14 @@
 // src/pages/Home.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import LoginModal from "../components/LoginModal";
-import Carousel from "../components/Carousel";
+import ModernCarousel from "../components/ModernCarousel";
 import ShippingBar from "../components/ShippingBar";
 import CategoriesGrid from "../components/CategoriesGrid";
 import BannerGif from "../components/BannerGif";
-import "../styles/global.css";
+
+import "../styles/homeModern.css";
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,39 +16,92 @@ const Home = () => {
   const navigate = useNavigate();
 
   const agregarAlCarrito = (producto) => {
-    setCarrito([...carrito, producto]);
+    setCarrito((prev) => [...prev, producto]);
   };
 
   return (
     <>
-      {/* Modal de login */}
-      <LoginModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-      {/* Carrusel principal con botón funcional */}
-      <Carousel onVerProductos={() => navigate("/productos")} />
 
-      {/* Barra de carrito simple */}
-      <div style={{
-        position: "fixed",
-        top: 10,
-        right: 10,
-        background: "#fff",
-        padding: "5px 10px",
-        borderRadius: "5px",
-        boxShadow: "0 0 5px rgba(0,0,0,0.2)"
-      }}>
-        🛒 Carrito: {carrito.length} productos
-      </div>
+      <main className="home-main">
+        <ModernCarousel onVerProductos={() => navigate("/productos")} />
 
-      {/* Contenido principal */}
-      <main>
-        <ShippingBar />
-        <CategoriesGrid agregarAlCarrito={agregarAlCarrito} />
-        <BannerGif />
+        <div className="home-content container">
+          <ShippingBar />
+
+          <section className="section intro-cards">
+            <div className="intro-left">
+              <h2>Un café. Un momento.</h2>
+              <p className="lead">
+                Cafés de especialidad, cápsulas y accesorios seleccionados
+                con cariño. Disfruta la experiencia Kairos en cada taza.
+              </p>
+              <div className="intro-actions">
+                <button
+                  className="btn-primary"
+                  onClick={() => navigate("/productos")}
+                >
+                  Comprar ahora
+                </button>
+                <button
+                  className="btn-ghost"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Mi cuenta
+                </button>
+              </div>
+            </div>
+            <div className="intro-right">
+              <div className="card-features">
+                <div className="feature">
+                  <div className="feature-icon">🚚</div>
+                  <div>
+                    <h4>Envío rápido</h4>
+                    <p>Despachos 24-72h en Chile</p>
+                  </div>
+                </div>
+
+                <div className="feature">
+                  <div className="feature-icon">☕</div>
+                  <div>
+                    <h4>Café seleccionado</h4>
+                    <p>Origen y tostado detallado</p>
+                  </div>
+                </div>
+
+                <div className="feature">
+                  <div className="feature-icon">⭐</div>
+                  <div>
+                    <h4>Calidad premium</h4>
+                    <p>Atención personalizada</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="section categories-section">
+            <h3 className="section-title">Categorías destacadas</h3>
+            <CategoriesGrid agregarAlCarrito={agregarAlCarrito} />
+          </section>
+
+          <section className="section banner-section">
+            <BannerGif />
+          </section>
+        </div>
       </main>
+
+      {/* Floating cart indicator */}
+      <div className="floating-cart" aria-hidden>
+        <div className="cart-inner">
+          <span className="cart-emoji">🛒</span>
+          <div className="cart-info">
+            <div className="cart-count">{carrito.length}</div>
+            <div className="cart-label">Productos</div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

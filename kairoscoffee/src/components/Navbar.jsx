@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Link } from "react-router-dom"; 
 import { useCarrito } from "../context/CarritoContext";
 import "../styles/navbar.css";
 
-const Navbar = ({ 
+const Navbar = ({
   onProfileClick = () => window.location.reload(),
   auth0Hook = null,
   carritoHook = null,
@@ -16,7 +15,9 @@ const Navbar = ({
   const carritoReal = useCarrito();
   const navigateReal = useNavigate();
 
-  const { isAuthenticated, user, logout, loginWithRedirect } = auth0Hook || auth0Real;
+  const { isAuthenticated, user, logout, loginWithRedirect } =
+    auth0Hook || auth0Real;
+
   const { carrito, toggleCart } = carritoHook || carritoReal;
   const navigate = navigateHook || navigateReal;
 
@@ -26,55 +27,50 @@ const Navbar = ({
   const backendAccessToken = localStorage.getItem("accessToken");
   const localUser = JSON.parse(localStorage.getItem("userData"));
 
-  const handleLogin = async () => {
-    await loginWithRedirect({
-      connection: "google-oauth2",
-    });
-  };
-
   const irACategoria = (categoria) => {
     navigate(`/productos?categoria=${categoria}`);
     setMenuOpen(false);
   };
 
   return (
-    <nav className={`navbar ${menuOpen ? "active" : ""}`}>
-      <div className="navbar-logo">
-        <span className="navbar-brand" onClick={() => navigate("/")}>
-          Kairos Coffee
-        </span>
+    <nav className={`nav-modern ${menuOpen ? "open" : ""}`}>
+
+      {/* LOGO */}
+      <div className="nav-logo" onClick={() => navigate("/")}>
+        Kairos Coffee
       </div>
 
-      <div className="navbar-links">
-        <span onClick={() => navigate("/")}>INICIO</span>
-        <span onClick={() => irACategoria("cafe")}>CAFÉ</span>
-        <span onClick={() => irACategoria("capsulas")}>CÁPSULAS</span>
-        <span onClick={() => irACategoria("accesorios")}>ACCESORIOS</span>
-        <span onClick={() => irACategoria("yerba")}>YERBA MATE</span>
-        <span onClick={() => navigate("/contacto")}>CONTÁCTANOS</span>
+      {/* LINKS */}
+      <div className="nav-links">
+        <span onClick={() => navigate("/")}>Inicio</span>
+        <span onClick={() => irACategoria("cafe")}>Café</span>
+        <span onClick={() => irACategoria("capsulas")}>Cápsulas</span>
+        <span onClick={() => irACategoria("accesorios")}>Accesorios</span>
+        <span onClick={() => irACategoria("yerba")}>Yerba Mate</span>
+        <span onClick={() => navigate("/contacto")}>Contáctanos</span>
       </div>
 
-      <div className="navbar-actions">
-        {isAuthenticated || backendAccessToken ? (
+      {/* ACCIONES (LOGIN / PERFIL / CARRITO) */}
+      <div className="nav-actions">
+
+        {/* SI ESTÁ LOGUEADO */}
+        {(isAuthenticated || backendAccessToken) ? (
           <>
-            <span className="navbar-user">
-              👋 Hola, {user?.name || localUser?.nombre || "Usuario"}
+            <span className="nav-user">
+              👋 {user?.name || localUser?.nombre || "Usuario"}
             </span>
 
-            <Link to="/perfil" className="btn-perfil">
-                Mi Perfil
+            <Link to="/perfil" className="nav-btn-outline">
+              Mi Perfil
             </Link>
 
-
             <button
-              className="btn-logout"
+              className="nav-btn-outline"
               onClick={() => {
-                // LOGOUT LOCAL
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
                 localStorage.removeItem("userData");
 
-                // LOGOUT SOCIAL
                 if (isAuthenticated) {
                   logout({ returnTo: window.location.origin });
                 } else {
@@ -82,28 +78,39 @@ const Navbar = ({
                 }
               }}
             >
-              CERRAR SESIÓN
+              Cerrar Sesión
             </button>
           </>
         ) : (
           <>
-            <button className="btn-registro-navbar" onClick={() => navigate("/registro")}>
-              REGISTRARSE
+            {/* SOLO ESTOS TRES BOTONES */}
+            <button
+              className="nav-btn-outline"
+              onClick={() => navigate("/productos")}
+            >
+              Ver Productos
             </button>
 
-            <button className="btn-login-navbar" onClick={() => navigate("/login")}>
-              INICIAR SESIÓN
+            <button
+              className="nav-btn-outline"
+              onClick={() => navigate("/registro")}
+            >
+              Registrarse
+            </button>
+
+            <button
+              className="nav-btn-filled"
+              onClick={() => navigate("/login")}
+            >
+              Iniciar Sesión
             </button>
           </>
         )}
 
-        <button 
-          className="btn-cart" 
-          onClick={toggleCart}
-          aria-label="Abrir carrito"
-          data-testid="cart-button"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        {/* CARRITO */}
+        <button className="nav-cart" onClick={toggleCart}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+            fill="currentColor" viewBox="0 0 24 24">
             <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 
               2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 
               0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2
@@ -113,15 +120,26 @@ const Navbar = ({
               7.59-.84 1.52C6.17 14.05 6.61 14.26 7.16 
               14.26z"/>
           </svg>
-          <span className="cart-count">{carrito?.length || 0}</span>
+
+          <span className="cart-badge">{carrito?.length || 0}</span>
         </button>
 
-        <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menú">
-          <span></span>
-          <span></span>
-          <span></span>
+        {/* HAMBURGUESA */}
+        <button className="nav-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+          <span></span><span></span><span></span>
         </button>
       </div>
+
+      {/* MENU MOBILE */}
+      <div className="nav-mobile">
+        <span onClick={() => navigate("/")}>Inicio</span>
+        <span onClick={() => irACategoria("cafe")}>Café</span>
+        <span onClick={() => irACategoria("capsulas")}>Cápsulas</span>
+        <span onClick={() => irACategoria("accesorios")}>Accesorios</span>
+        <span onClick={() => irACategoria("yerba")}>Yerba Mate</span>
+        <span onClick={() => navigate("/contacto")}>Contáctanos</span>
+      </div>
+
     </nav>
   );
 };

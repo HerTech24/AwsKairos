@@ -3,207 +3,202 @@
   --color-tostado: #5C4A3C;
   --color-gold: #F5F5DC;
   --color-trigo: #f5deb3;
+
+  --text-light: #ffffff;
+  --transition: 0.25s ease;
 }
 
-/* =============================
-   NAVBAR KAIROS COFFEE - FINAL
-   ============================= */
+/* ============================
+   NAVBAR MODERNO - PHAMILY STYLE
+   ============================ */
 
-.navbar {
+.nav-modern {
   width: 100%;
-  background-color: var(--color-primary);
-  color: white;
+  background: var(--color-primary);
+  color: var(--text-light);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 32px;
+  padding: 14px 32px;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+  transition: background var(--transition);
 }
 
-/* ---------- LOGO ---------- */
-.navbar-logo img {
-  height: 60px;
-}
-
-.navbar-logo .navbar-brand {
-  font-size: 1.6rem;
-  color: var(--color-trigo);
+/* LOGO */
+.nav-logo {
+  font-size: 1.7rem;
   font-weight: bold;
-  text-decoration: none;
   cursor: pointer;
+  color: var(--color-trigo);
+  letter-spacing: 1px;
+  transition: opacity var(--transition);
 }
 
-/* ---------- LINKS PRINCIPALES ---------- */
-.navbar-links {
+.nav-logo:hover {
+  opacity: 0.8;
+}
+
+/* LINKS */
+.nav-links {
   display: flex;
-  gap: 20px;
+  gap: 26px;
 }
 
-.navbar-links span {
-  text-decoration: none;
-  color: white;
+.nav-links span {
   font-weight: 600;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: opacity var(--transition), transform var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.navbar-links span:hover {
-  color: var(--color-trigo);
+.nav-links span:hover {
+  opacity: 0.7;
+  transform: translateY(-2px);
 }
 
-/* ---------- ACCIONES DE USUARIO ---------- */
-.navbar-user-actions,
-.navbar-actions {
+/* ACCIONES */
+.nav-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
-/* ---------- BOTÓN REGISTRO ---------- */
-.btn-registro-navbar {
-  background-color: transparent;
-  color: white;
-  border: 1.8px solid white;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 0.9rem;
+/* USER GREETING */
+.nav-user {
   font-weight: 600;
+  opacity: 0.85;
+}
+
+/* BOTÓN OUTLINE */
+.nav-btn-outline {
+  background: transparent;
+  border: 2px solid var(--text-light);
+  color: var(--text-light);
+  padding: 8px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  text-transform: uppercase;
+  text-decoration: none;
+  transition: var(--transition);
+  font-weight: bold;
 }
 
-.btn-registro-navbar:hover {
-  background-color: white;
+.nav-btn-outline:hover {
+  background: var(--text-light);
   color: var(--color-primary);
-  border-color: white;
 }
 
-/* ---------- BOTÓN INICIAR SESIÓN ---------- */
-.btn-login-navbar {
-  background-color: var(--color-tostado);
-  color: var(--color-gold);
+/* BOTÓN FILLED */
+.nav-btn-filled {
+  background: var(--color-tostado);
   border: 2px solid var(--color-gold);
+  color: var(--color-gold);
+  padding: 9px 18px;
   border-radius: 12px;
-  padding: 10px 20px;
-  font-size: 0.95rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: var(--transition);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
 }
 
-.btn-login-navbar:hover {
-  background-color: #3e2f24;
-  color: #FFC700;
+.nav-btn-filled:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
 }
 
-/* ---------- BOTONES PERFIL / LOGOUT ---------- */
-.btn-profile,
-.btn-logout {
-  background: none;
-  border: 2px solid white;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-profile:hover,
-.btn-logout:hover {
-  background-color: white;
-  color: var(--color-primary);
-}
-
-/* ---------- PERFIL ---------- */
-.btn-perfil {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.btn-perfil:hover {
-  color: var(--color-trigo);
-}
-
-/* ---------- CARRITO ---------- */
-.btn-cart {
+/* CARRITO */
+.nav-cart {
   background: none;
   border: none;
-  color: white;
-  cursor: pointer;
+  color: var(--text-light);
   position: relative;
-  font-size: 1.2rem;
-  transition: transform 0.2s ease, color 0.3s ease;
+  cursor: pointer;
+  transition: transform var(--transition);
 }
 
-.btn-cart:hover {
-  transform: scale(1.1);
-  color: #6c3f07;
+.nav-cart:hover {
+  transform: scale(1.12);
 }
 
-.cart-count {
+.cart-badge {
   position: absolute;
   top: -6px;
   right: -10px;
-  background-color: var(--color-gold);
-  color: #2c2c2c;
+  background: var(--color-gold);
+  color: #333;
   font-size: 0.7rem;
   font-weight: bold;
   border-radius: 50%;
   padding: 2px 6px;
 }
 
-/* ---------- MENÚ HAMBURGUESA ---------- */
-.menu-toggle {
+/* HAMBURGUESA */
+.nav-toggle {
   display: none;
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: auto; /* empuja al extremo derecho dentro del grupo */
+  flex-direction: column;
+  gap: 5px;
 }
 
-.menu-toggle span {
-  display: block;
-  width: 25px;
+.nav-toggle span {
+  width: 26px;
   height: 3px;
-  background-color: white;
-  margin: 4px 0;
+  background: var(--text-light);
   border-radius: 2px;
+  transition: var(--transition);
 }
 
+/* MODO ABIERTO */
+.nav-modern.open .nav-toggle span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.nav-modern.open .nav-toggle span:nth-child(2) {
+  opacity: 0;
+}
+.nav-modern.open .nav-toggle span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
 
-/* RESPONSIVE: mostrar hamburguesa en pantallas pequeñas */
-@media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-  }
+/* MOBILE MENU */
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  background: var(--color-primary);
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+  gap: 18px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  animation: fadeDown 0.25s ease;
+}
 
-  .navbar-links,
-  .navbar-user-actions {
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-mobile span {
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =========== RESPONSIVE =========== */
+@media (max-width: 900px) {
+  .nav-links {
     display: none;
-    flex-direction: column;
-    background-color: var(--color-primary);
-    position: absolute;
-    top: 70px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    padding: 20px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  .navbar.active .navbar-links,
-  .navbar.active .navbar-user-actions {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-modern.open .nav-mobile {
     display: flex;
   }
 }

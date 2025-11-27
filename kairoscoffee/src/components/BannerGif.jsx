@@ -1,16 +1,20 @@
+// src/components/home/BannerGif.jsx
 import React from "react";
 
-export default function BannerGif() {
-    return (
-        <section className="banner-gif" aria-label="Cita inspiracional de café">
-        <img
-            src="https://org.coloradomesa.edu/~cagardner2/images/ProjectCafeGif2.gif"
-            alt="Banner Animado de Café"
-        />
-        <div className="banner-gif-text">
-            <p>"Una taza de té es una excusa para la introspección."</p>
-            <p>- Lin Yutang</p>
-        </div>
-        </section>
-    );
-}
+const BannerGif = () => {
+  return (
+    <div className="hero-banner">
+      <div className="hero-left">
+        <h3>Descubre la nueva línea de cafés de temporada</h3>
+        <p>Edición limitada — tostado por experta mano local.</p>
+        <button className="btn-primary">Ver colección</button>
+      </div>
+      <div className="hero-right" aria-hidden>
+        {/* Placeholder ilustrativo (puedes reemplazar por gif) */}
+        <div className="hero-art">☕✨</div>
+      </div>
+    </div>
+  );
+};
+
+export default BannerGif;
