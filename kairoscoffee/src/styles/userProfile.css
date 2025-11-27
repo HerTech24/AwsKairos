@@ -1,0 +1,67 @@
+/* CONTENEDOR PRINCIPAL */
+.perfil-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #2e1f18;
+}
+
+/* HEADER */
+.perfil-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.perfil-header h1 {
+  font-size: 2.2rem;
+  color: #2e1f18;
+}
+
+.perfil-sub {
+  color: #6b4f3a;
+}
+
+/* CARD GENERAL */
+.user-card, .history-card {
+  background: #f7eee6;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  margin-bottom: 25px;
+}
+
+/* DATOS PERSONALES */
+.user-info p {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+/* HISTORIAL */
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.history-product {
+  font-weight: bold;
+}
+
+.history-date {
+  display: block;
+  font-size: 0.9rem;
+  color: #6b4f3a;
+}
+
+.history-total {
+  font-weight: bold;
+  color: #2e1f18;
+}

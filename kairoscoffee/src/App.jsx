@@ -12,6 +12,7 @@ import ProductosPage from "./pages/ProductosPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
+import UserProfilePage from "./pages/UserProfilePage";   // ⬅️ NUEVO
 
 // Contexto del carrito
 import { CarritoProvider } from "./context/CarritoContext";
@@ -20,13 +21,11 @@ import { CarritoProvider } from "./context/CarritoContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-// ⬅️ IMPORTA EL HOOK QUE SINCRONIZA Auth0 → Backend
+// Auth0 → Backend Sync
 import { useAuthBackend } from "./auth/useAuthBackend";
 
 const App = () => {
-
-  // ⬅️ ACTIVA LA SINCRONIZACIÓN AUTOMÁTICA
-  useAuthBackend();
+  useAuthBackend(); // Sync automática al iniciar
 
   return (
     <CarritoProvider>
@@ -34,11 +33,12 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/registro" element={<Register />} />
-        <Route path="/login" element={<LoginPage />} />   {/* ← AÑADIR */}
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactPage />} />
         <Route path="/productos" element={<ProductosPage />} />
         <Route path="/confirmation" element={<ConfirmationPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/perfil" element={<UserProfilePage />} /> {/* ⬅️ AGREGADO */}
       </Routes>
       <Footer />
     </CarritoProvider>

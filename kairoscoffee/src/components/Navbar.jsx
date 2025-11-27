@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Link } from "react-router-dom"; 
 import { useCarrito } from "../context/CarritoContext";
 import "../styles/navbar.css";
 
@@ -60,9 +61,10 @@ const Navbar = ({
               👋 Hola, {user?.name || localUser?.nombre || "Usuario"}
             </span>
 
-            <button className="btn-profile" onClick={onProfileClick}>
-              PERFIL
-            </button>
+            <Link to="/perfil" className="btn-perfil">
+                Mi Perfil
+            </Link>
+
 
             <button
               className="btn-logout"
