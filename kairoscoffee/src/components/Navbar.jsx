@@ -27,6 +27,19 @@ const Navbar = ({
   const backendAccessToken = localStorage.getItem("accessToken");
   const localUser = JSON.parse(localStorage.getItem("userData"));
 
+  // === OBTENER PRIMER NOMBRE ===
+  const obtenerPrimerNombre = () => {
+    // Prioridad: Auth0 user -> localUser
+    const nombreCompleto = user?.name || localUser?.nombre || "";
+    
+    if (!nombreCompleto) return "Usuario";
+    
+    // Extraer primer nombre (antes del primer espacio)
+    const primerNombre = nombreCompleto.trim().split(" ")[0];
+    
+    return primerNombre;
+  };
+
   const irACategoria = (categoria) => {
     navigate(`/productos?categoria=${categoria}`);
     setMenuOpen(false);
@@ -57,7 +70,7 @@ const Navbar = ({
         {(isAuthenticated || backendAccessToken) ? (
           <>
             <span className="nav-user">
-              👋 {user?.name || localUser?.nombre || "Usuario"}
+              👋 Hola, {obtenerPrimerNombre()}!
             </span>
 
             <Link to="/perfil" className="nav-btn-outline">
@@ -83,13 +96,7 @@ const Navbar = ({
           </>
         ) : (
           <>
-            {/* SOLO ESTOS TRES BOTONES */}
-            <button
-              className="nav-btn-outline"
-              onClick={() => navigate("/productos")}
-            >
-              Ver Productos
-            </button>
+            {/* SOLO ESTOS DOS BOTONES */}
 
             <button
               className="nav-btn-outline"

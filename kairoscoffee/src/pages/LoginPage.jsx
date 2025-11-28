@@ -31,13 +31,30 @@ const LoginPage = () => {
 
       const data = await res.json();
 
+      console.log("🔍 Respuesta del backend:", data);
+
       // Guardar tokens
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
 
-      // Guardar usuario local
-      if (data.user) {
-        localStorage.setItem("userData", JSON.stringify(data.user));
+      // Guardar usuario local con la estructura correcta
+      // El backend puede devolver data.user o data.usuario
+      const usuarioData = data.user || data.usuario;
+      
+      if (usuarioData) {
+        // Asegurar que guardamos nombre y apellido correctamente
+        const userToSave = {
+          id: usuarioData.id || usuarioData.idUsuario,
+          nombre: usuarioData.nombre,
+          apellido: usuarioData.apellido,
+          email: usuarioData.email,
+          telefono: usuarioData.telefono
+        };
+        
+        localStorage.setItem("userData", JSON.stringify(userToSave));
+        console.log("✅ Usuario guardado:", userToSave);
+      } else {
+        console.warn("⚠️ No se encontró información del usuario en la respuesta");
       }
 
       setAlert({ type: "success", message: "Inicio de sesión exitoso" });
