@@ -1,28 +1,27 @@
 // src/pages/Home.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCarrito } from "../context/CarritoContext";
 
 import LoginModal from "../components/LoginModal";
 import ModernCarousel from "../components/ModernCarousel";
 import ShippingBar from "../components/ShippingBar";
 import CategoriesGrid from "../components/CategoriesGrid";
 import BannerGif from "../components/BannerGif";
+import CarritoPanel from "../components/CarritoPanel";
 
 import "../styles/homeModern.css";
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
-
-  const agregarAlCarrito = (producto) => {
-    setCarrito((prev) => [...prev, producto]);
-  };
+  
+  // Usar el contexto global del carrito
+  const { carrito, agregarProducto, toggleCart } = useCarrito();
 
   return (
     <>
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
 
       <main className="home-main">
         <ModernCarousel onVerProductos={() => navigate("/productos")} />
@@ -83,7 +82,7 @@ const Home = () => {
 
           <section className="section categories-section">
             <h3 className="section-title">Categorías destacadas</h3>
-            <CategoriesGrid agregarAlCarrito={agregarAlCarrito} />
+            <CategoriesGrid agregarAlCarrito={agregarProducto} />
           </section>
 
           <section className="section banner-section">
@@ -92,8 +91,16 @@ const Home = () => {
         </div>
       </main>
 
-      {/* Floating cart indicator */}
-      <div className="floating-cart" aria-hidden>
+      {/* Panel del carrito */}
+      <CarritoPanel />
+
+      {/* Floating cart indicator - AHORA CLICKEABLE */}
+      <div 
+        className="floating-cart" 
+        onClick={toggleCart}
+        style={{ cursor: 'pointer' }}
+        title="Ver carrito"
+      >
         <div className="cart-inner">
           <span className="cart-emoji">🛒</span>
           <div className="cart-info">

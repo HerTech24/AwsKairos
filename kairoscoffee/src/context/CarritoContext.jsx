@@ -1,73 +1,98 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// ✅ ÚNICO CAMBIO REQUERIDO:
-// Añadimos 'export' para que los tests puedan importar el Contexto.
-export const CarritoContext = createContext();
-
+const CarritoContext = createContext();
 export const useCarrito = () => useContext(CarritoContext);
 
 export const CarritoProvider = ({ children }) => {
   const [carrito, setCarrito] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // Cargar carrito desde localStorage al iniciar
   useEffect(() => {
-    const stored = localStorage.getItem("carrito");
-    if (stored) setCarrito(JSON.parse(stored));
+    const savedCart = localStorage.getItem("kairosCart");
+    if (savedCart) {
+      try {
+        setCarrito(JSON.parse(savedCart));
+      } catch (error) {
+        console.error("Error al cargar el carrito:", error);
+      }
+    }
   }, []);
 
+  // Guardar carrito en localStorage cada vez que cambie
   useEffect(() => {
-    localStorage.setItem("carrito", JSON.stringify(carrito));
+    localStorage.setItem("kairosCart", JSON.stringify(carrito));
   }, [carrito]);
 
-  const agregarProducto = (nuevoProducto) => {
-    setCarrito((prevCarrito) => {
-      const existe = prevCarrito.find((item) => item.id === nuevoProducto.id);
-
-      if (existe) {
-        return prevCarrito.map((item) =>
-          item.id === nuevoProducto.id
+  const agregarProducto = (producto) => {
+    // Buscar si el producto ya existe en el carrito
+    const existente = carrito.find((item) => item.id === producto.id);
+    
+    if (existente) {
+      // Si existe, aumentar cantidad
+      setCarrito(
+        carrito.map((item) =>
+          item.id === producto.id
             ? { ...item, quantity: (item.quantity || 1) + 1 }
             : item
-        );
-      }
-
-      return [...prevCarrito, { ...nuevoProducto, quantity: 1 }];
-    });
+        )
+      );
+    } else {
+      // Si no existe, agregarlo con cantidad 1
+      setCarrito([...carrito, { ...producto, quantity: 1 }]);
+    }
   };
 
-  const updateQuantity = (id, nuevaCantidad) => {
-    setCarrito((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: nuevaCantidad } : item
+  const eliminarProducto = (index) => {
+    setCarrito(carrito.filter((_, i) => i !== index));
+  };
+
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity < 1) {
+      // Si la cantidad es 0, eliminar el producto
+      setCarrito(carrito.filter((item) => item.id !== productId));
+      return;
+    }
+    setCarrito(
+      carrito.map((item) =>
+        item.id === productId ? { ...item, quantity: newQuantity } : item
       )
     );
   };
 
-  const removeFromCart = (id) => {
-    setCarrito((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const eliminarProducto = (index) => {
-    setCarrito((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const vaciarCarrito = () => {
+  const clearCart = () => {
     setCarrito([]);
+    localStorage.removeItem("kairosCart");
   };
 
-  const toggleCart = () => setIsCartOpen((prev) => !prev);
+  const getCartTotal = () => {
+    return carrito.reduce(
+      (total, item) => total + (item.precio || 0) * (item.quantity || 1),
+      0
+    );
+  };
+
+  const getCartItemsCount = () => {
+    return carrito.reduce((total, item) => total + (item.quantity || 1), 0);
+  };
+
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
 
   return (
     <CarritoContext.Provider
       value={{
         carrito,
         agregarProducto,
-        updateQuantity,
-        removeFromCart,
         eliminarProducto,
-        vaciarCarrito,
+        updateQuantity,
+        clearCart,
+        getCartTotal,
+        getCartItemsCount,
         isCartOpen,
         toggleCart,
+        setIsCartOpen,
       }}
     >
       {children}
