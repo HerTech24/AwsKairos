@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCarrito } from "../context/CarritoContext";
@@ -16,8 +15,8 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   
-  // Usar el contexto global del carrito
-  const { carrito, agregarProducto, toggleCart } = useCarrito();
+  // CORRECCIÓN AQUÍ: Agregamos isCartOpen a la desestructuración
+  const { carrito, agregarProducto, toggleCart, isCartOpen } = useCarrito();
 
   return (
     <>
@@ -94,21 +93,23 @@ const Home = () => {
       {/* Panel del carrito */}
       <CarritoPanel />
 
-      {/* Floating cart indicator - AHORA CLICKEABLE */}
-      <div 
-        className="floating-cart" 
-        onClick={toggleCart}
-        style={{ cursor: 'pointer' }}
-        title="Ver carrito"
-      >
-        <div className="cart-inner">
-          <span className="cart-emoji">🛒</span>
-          <div className="cart-info">
-            <div className="cart-count">{carrito.length}</div>
-            <div className="cart-label">Productos</div>
+      {/* Floating cart indicator - AHORA YA NO DARÁ ERROR */}
+      {!isCartOpen && (
+        <div 
+          className="floating-cart" 
+          onClick={toggleCart}
+          style={{ cursor: 'pointer' }}
+          title="Ver carrito"
+        >
+          <div className="cart-inner">
+            <span className="cart-emoji">🛒</span>
+            <div className="cart-info">
+              <div className="cart-count">{carrito.length}</div>
+              <div className="cart-label">Productos</div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
