@@ -110,3 +110,18 @@
     font-size: 1.3rem;
   }
 }
+/* FIX PARA QUE SE VEA EL NÚMERO DE LA CANTIDAD */
+input[type="number"],
+.quantity-input,
+.quantity-box input {
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 40px !important;
+    text-align: center !important;
+    font-size: 18px !important;
+    line-height: 40px !important;
+    padding: 0 !important;
+    appearance: textfield !important;
+    background: #fff !important;
+    color: #000 !important;
+}
