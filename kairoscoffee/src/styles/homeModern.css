@@ -54,11 +54,26 @@ body{background:var(--bg); font-family: Inter, 'Segoe UI', Arial, sans-serif; co
 /* sizes */
 .small{ padding:8px 12px; font-size:0.9rem}
 
-/* MAIN LAYOUT */
-.home-main{ max-width:1180px; margin: 28px auto; padding: 0 20px 80px; }
+/* MAIN LAYOUT - MÁS ANCHO */
+.home-main{ 
+  max-width: 1400px; 
+  margin: 28px auto; 
+  padding: 0 20px 80px; 
+}
 
-/* CAROUSEL */
-.modern-carousel{ height:62vh; border-radius:18px; overflow:hidden; position:relative; display:block; margin-bottom:28px; box-shadow: 0 18px 50px rgba(46,31,24,0.12); }
+/* CAROUSEL - MÁS ANCHO */
+.modern-carousel{ 
+  height: 72vh; 
+  border-radius: 18px; 
+  overflow: hidden; 
+  position: relative; 
+  display: block; 
+  margin-bottom: 28px; 
+  box-shadow: 0 18px 50px rgba(46,31,24,0.12);
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+}
 .carousel-slide{ position:absolute; inset:0; display:flex; align-items:center; padding:34px; opacity:0; transform: scale(1.03); transition: all 900ms ease; justify-content:flex-start;}
 .carousel-slide.active{ opacity:1; transform: scale(1); }
 .carousel-overlay{ color:white; max-width:720px; backdrop-filter: blur(2px); }
@@ -71,8 +86,11 @@ body{background:var(--bg); font-family: Inter, 'Segoe UI', Arial, sans-serif; co
 .dot{ width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,0.5); border: 2px solid rgba(255,255,255,0.12); cursor:pointer; transition: all 200ms;}
 .dot.active{ width:14px; height:14px; background:var(--primary); border-color: rgba(255,255,255,0.9); }
 
-/* CONTAINER */
-.container{ max-width:1180px; margin:0 auto; }
+/* CONTAINER - MÁS ANCHO */
+.container{ 
+  max-width: 1400px; 
+  margin: 0 auto; 
+}
 
 /* SHIPPING BAR */
 .shipping-bar{ display:flex; justify-content:center; margin-bottom:18px; }
@@ -106,7 +124,7 @@ body{background:var(--bg); font-family: Inter, 'Segoe UI', Arial, sans-serif; co
 .hero-art{ width:160px; height:120px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:2.6rem; background: linear-gradient(135deg,#F5E6D0,#fff); box-shadow: inset 0 -6px 18px rgba(0,0,0,0.03)}
 
 /* FLOATING CART */
-.floating-cart{ position:fixed; right:18px; bottom:18px; z-index:1200; }
+.floating-cart{ position:fixed; right:18px; bottom:18px; z-index:1200; cursor:pointer; }
 .cart-inner{ background: linear-gradient(180deg,#fff,#fff); border-radius:14px; padding:10px 14px; display:flex; gap:10px; align-items:center; box-shadow: 0 10px 30px rgba(46,31,24,0.12); }
 .cart-emoji{ font-size:1.2rem; }
 .cart-count{ font-weight:700; }
