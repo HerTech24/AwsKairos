@@ -4,10 +4,10 @@ import LogoKairos from "../assets/img/Logo_KairosCoffee.png";
 import "../styles/confirmation.css";
 
 const ConfirmationPage = () => {
-  const { vaciarCarrito } = useCarrito();
+  const { clearCart } = useCarrito();
 
   useEffect(() => {
-    vaciarCarrito(); // Vacía el carrito al cargar la página
+    clearCart(); // Vacía el carrito al cargar la página
   }, []);
 
   return (
