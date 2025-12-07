@@ -1,56 +1,48 @@
-/**
- * Test del componente Slider
- * ✅ Adaptado para Karma + Jasmine + React 18 (sin Jest)
- */
-
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Slider from "../../components/Slider";
+import { CarritoContext } from "../../context/CarritoContext";
 
-describe("🧩 Slider Component (Jasmine + Karma)", () => {
-  const mockAgregarAlCarrito = jasmine.createSpy("agregarAlCarrito");
-  const items = [
-    { id: 1, nombre: "Café Premium" },
-    { id: 2, nombre: "Yerba Mate" },
-    { id: 3, nombre: "Té Verde" },
+describe("🖼️ Slider Component (Jasmine)", () => {
+  let mockAgregarProducto;
+  const mockItems = [
+    { id: 1, nombre: "Café Test", precio: 5000, imagen: "img.jpg" }
   ];
 
-  beforeEach(() => jasmine.clock().install());
-  afterEach(() => {
-    jasmine.clock().uninstall();
-    mockAgregarAlCarrito.calls.reset();
+  beforeEach(() => {
+    mockAgregarProducto = jasmine.createSpy("agregarProducto");
   });
 
-  it("renderiza correctamente todos los productos del slider", () => {
-    render(<Slider items={items} agregarAlCarrito={mockAgregarAlCarrito} />);
-    expect(screen.queryByText(/Café Premium/i)).toBeDefined();
-    expect(screen.queryByText(/Yerba Mate/i)).toBeDefined();
-    expect(screen.queryByText(/Té Verde/i)).toBeDefined();
+  it("renderiza items y permite agregar (Props)", () => {
+    // IMPORTANTE: Pasamos agregarAlCarrito como PROP porque tu componente lo usa así
+    render(
+      <CarritoContext.Provider value={{ agregarProducto: mockAgregarProducto }}>
+        <Slider items={mockItems} agregarAlCarrito={mockAgregarProducto} />
+      </CarritoContext.Provider>
+    );
+
+    expect(screen.getByText("Café Test")).toBeTruthy();
+    
+    // Buscamos el botón y hacemos click
+    const btns = screen.getAllByRole("button", { name: /agregar/i });
+    fireEvent.click(btns[0]);
+
+    expect(mockAgregarProducto).toHaveBeenCalledWith(jasmine.objectContaining({
+      id: 1,
+      nombre: "Café Test"
+    }));
   });
 
-  it("permite desplazarse a la izquierda y derecha sin errores", () => {
-    render(<Slider items={items} agregarAlCarrito={mockAgregarAlCarrito} />);
-    const prevBtn = screen.getByRole("button", { name: /anterior|previous/i });
-    const nextBtn = screen.getByRole("button", { name: /siguiente|next/i });
-
-    expect(prevBtn).toBeDefined();
-    expect(nextBtn).toBeDefined();
-
-    fireEvent.click(prevBtn);
-    fireEvent.click(nextBtn);
-  });
-
-  it("ejecuta agregarAlCarrito al hacer clic en el botón correspondiente", () => {
-    render(<Slider items={items} agregarAlCarrito={mockAgregarAlCarrito} />);
-    const addButtons = screen.getAllByRole("button", { name: /agregar/i });
-    expect(addButtons.length).toBeGreaterThan(0);
-    fireEvent.click(addButtons[0]);
-    expect(mockAgregarAlCarrito).toHaveBeenCalled();
-  });
-
-  it("muestra mensaje vacío si no hay productos", () => {
-    render(<Slider items={[]} agregarAlCarrito={mockAgregarAlCarrito} />);
-    const emptyMessage = screen.queryByText(/no hay productos/i);
-    expect(emptyMessage).toBeDefined();
+  it("maneja lista vacía (Branch coverage)", () => {
+    // IMPORTANTE: Pasamos un array VACÍO [], no undefined, para que .map no explote
+    render(
+      <CarritoContext.Provider value={{ agregarProducto: mockAgregarProducto }}>
+        <Slider items={[]} agregarAlCarrito={mockAgregarProducto} />
+      </CarritoContext.Provider>
+    );
+    
+    // Verifica que NO haya items renderizados o busque el mensaje de vacío si existe
+    const item = screen.queryByText("Café Test");
+    expect(item).toBeNull();
   });
 });

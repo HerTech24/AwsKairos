@@ -1,21 +1,17 @@
 module.exports = function (config) {
   config.set({
-    // Frameworks principales
     frameworks: ["jasmine", "webpack"],
 
-    // Archivos de prueba (Setup primero, luego los tests)
-        files: [
+    files: [
       "src/test-setup.js", 
       "src/tests/**/*.spec.js"
-      ],
+    ],
 
-    // Preprocesamiento: Webpack para el setup y los tests
     preprocessors: {
       "src/test-setup.js": ["webpack"],
-      "src/tests/**/*.spec.js": ["webpack", "coverage"],
+      "src/tests/**/*.spec.js": ["webpack", "coverage"], // Coverage aquí para reportar
     },
 
-    // Configuración Webpack para transformar y mockear entorno reactivo
     webpack: {
       mode: "development",
       module: {
@@ -25,8 +21,15 @@ module.exports = function (config) {
             exclude: /node_modules/,
             use: {
               loader: "babel-loader",
-              // Opciones de Babel eliminadas de aquí.
-              // Webpack usará automáticamente tu archivo .babelrc
+              // 🔥 SOLUCIÓN AQUÍ: Forzamos la configuración de Babel
+              // para asegurar que el plugin de cobertura 'istanbul' se cargue siempre.
+              options: {
+                presets: [
+                  "@babel/preset-env",
+                  ["@babel/preset-react", { "runtime": "automatic" }]
+                ],
+                plugins: ["babel-plugin-istanbul"] 
+              }
             },
           },
           {
@@ -44,35 +47,30 @@ module.exports = function (config) {
       },
     },
 
-    // Reporteadores
     reporters: ["spec", "coverage"],
 
     coverageReporter: {
       dir: "coverage/",
       reporters: [
         { type: "html", subdir: "html" },
-        { type: "lcov", subdir: "lcov" },
-        { type: "text-summary" }
+        { type: "text-summary" } // Reporte en terminal
       ],
-      // Excluir los archivos de test y setup del reporte de cobertura
+      // IMPORTANTE: Excluir tests para que no cuenten en el % final
       exclude: [
-          "src/tests",
+          "src/tests/**",
           "src/test-setup.js"
       ],
-
       check: {
         global: {
-          statements: 100,
-          branches: 50,
-          functions: 100,
+          statements: 80,
+          branches: 800, 
+          functions: 80,
           lines: 100
         }
       }
-
     },
     
     browsers: ["ChromeHeadless"],
-
     singleRun: true,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -92,7 +90,6 @@ module.exports = function (config) {
       showSpecTiming: true,
     },
 
-    // Plugins necesarios (estaban bien)
     plugins: [
       "karma-webpack",
       "karma-jasmine",

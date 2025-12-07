@@ -1,112 +1,102 @@
-// src/tests/context/CarritoContext.spec.js
 import React from "react";
 import { renderHook, act } from "@testing-library/react";
 import { CarritoProvider, useCarrito } from "../../context/CarritoContext";
 
-describe("CarritoContext (Karma + Jasmine)", () => {
-    const wrapper = ({ children }) => <CarritoProvider>{children}</CarritoProvider>;
+describe("🛒 CarritoContext (Cobertura Total)", () => {
+  const wrapper = ({ children }) => <CarritoProvider>{children}</CarritoProvider>;
 
-    beforeEach(() => {
-        localStorage.clear();
-    });
+  beforeEach(() => {
+    localStorage.clear();
+    
+    // Configuración segura de Spies para evitar errores de Jasmine
+    if (!jasmine.isSpy(localStorage.getItem)) spyOn(localStorage, "getItem").and.callThrough();
+    if (!jasmine.isSpy(localStorage.setItem)) spyOn(localStorage, "setItem").and.callThrough();
+    if (!jasmine.isSpy(localStorage.removeItem)) spyOn(localStorage, "removeItem").and.callThrough();
+    if (!jasmine.isSpy(console.error)) spyOn(console, "error");
+  });
 
-    it("agrega un producto al carrito", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-        const producto = { id: 1, nombre: "Café", precio: 10 };
+  // --- BRANCHES DE CARGA (localStorage) ---
+  
+  it("Branch: Inicia vacío si localStorage es null", () => {
+    localStorage.getItem.and.returnValue(null);
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    expect(result.current.carrito).toEqual([]);
+  });
 
-        act(() => result.current.agregarProducto(producto));
+  it("Branch: Catch error si el JSON es inválido", () => {
+    localStorage.getItem.and.returnValue("JSON_INVALIDO_{");
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    expect(result.current.carrito).toEqual([]);
+    expect(console.error).toHaveBeenCalled();
+  });
 
-        expect(result.current.carrito.length).toBe(1);
-        expect(result.current.carrito[0].quantity).toBe(1);
-    });
+  // --- BRANCHES DE CÁLCULO (|| 0 y || 1) ---
 
-    it("incrementa la cantidad de un producto existente", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-        const producto = { id: 1, nombre: "Café", precio: 10 };
+  it("Branch: Fallback a precio 0 y quantity 1", () => {
+    // Inyectamos item sin precio ni cantidad via localStorage para forzar los operadores ||
+    const itemRoto = [{ id: 99, nombre: "Item Roto" }]; 
+    localStorage.getItem.and.returnValue(JSON.stringify(itemRoto));
 
-        act(() => result.current.agregarProducto(producto));
-        act(() => result.current.agregarProducto(producto));
+    const { result } = renderHook(() => useCarrito(), { wrapper });
 
-        expect(result.current.carrito[0].quantity).toBe(2);
-    });
+    // (undefined || 0) * (undefined || 1) = 0
+    expect(result.current.getCartTotal()).toBe(0);
+    // (undefined || 1) = 1
+    expect(result.current.getCartItemsCount()).toBe(1);
+  });
 
-    it("maneja productos sin quantity inicial (usa 1 por defecto)", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-        const producto = { id: 1, nombre: "Café", precio: 10, quantity: undefined };
+  // --- LÓGICA DE NEGOCIO ---
 
-        act(() => result.current.agregarProducto(producto));
-        act(() => result.current.agregarProducto(producto));
+  it("Agrega producto (Else)", () => {
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    act(() => result.current.agregarProducto({ id: 1, precio: 100 }));
+    expect(result.current.carrito.length).toBe(1);
+  });
 
-        // Primera vez: quantity = 1, segunda vez: (undefined || 1) + 1 = 2
-        expect(result.current.carrito[0].quantity).toBe(2);
-    });
+  it("Incrementa cantidad (If)", () => {
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    const prod = { id: 1, precio: 100 };
+    act(() => result.current.agregarProducto(prod));
+    act(() => result.current.agregarProducto(prod));
+    expect(result.current.carrito[0].quantity).toBe(2);
+  });
 
-    it("actualiza la cantidad de un producto", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-        const producto = { id: 1, nombre: "Café", precio: 10 };
+  it("Elimina producto por índice", () => {
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    act(() => { result.current.agregarProducto({ id: 10 }); });
+    act(() => { result.current.agregarProducto({ id: 20 }); });
 
-        act(() => result.current.agregarProducto(producto));
-        act(() => result.current.updateQuantity(1, 5));
+    act(() => { result.current.eliminarProducto(0); });
 
-        expect(result.current.carrito[0].quantity).toBe(5);
-    });
+    expect(result.current.carrito.length).toBe(1);
+    expect(result.current.carrito[0].id).toBe(20);
+  });
 
-    it("elimina un producto por ID", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-        const producto = { id: 1, nombre: "Café", precio: 10 };
+  it("updateQuantity elimina si < 1", () => {
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    act(() => result.current.agregarProducto({ id: 1 }));
+    act(() => result.current.updateQuantity(1, 0));
+    expect(result.current.carrito.length).toBe(0);
+  });
 
-        act(() => result.current.agregarProducto(producto));
-        act(() => result.current.removeFromCart(1));
+  it("updateQuantity actualiza normal", () => {
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    act(() => result.current.agregarProducto({ id: 1 }));
+    act(() => result.current.updateQuantity(1, 5));
+    expect(result.current.carrito[0].quantity).toBe(5);
+  });
 
-        expect(result.current.carrito.length).toBe(0);
-    });
+  it("ClearCart, ToggleCart y SetIsCartOpen", () => {
+    const { result } = renderHook(() => useCarrito(), { wrapper });
+    
+    act(() => result.current.toggleCart());
+    expect(result.current.isCartOpen).toBe(true);
+    
+    act(() => result.current.setIsCartOpen(false));
+    expect(result.current.isCartOpen).toBe(false);
 
-    it("elimina un producto por índice", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-        const producto = { id: 1, nombre: "Café", precio: 10 };
-
-        act(() => result.current.agregarProducto(producto));
-        act(() => result.current.eliminarProducto(0));
-
-        expect(result.current.carrito.length).toBe(0);
-    });
-
-    it("vacía completamente el carrito", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-        const producto1 = { id: 1, nombre: "Café", precio: 10 };
-        const producto2 = { id: 2, nombre: "Té", precio: 5 };
-
-        act(() => {
-        result.current.agregarProducto(producto1);
-        result.current.agregarProducto(producto2);
-        });
-
-        expect(result.current.carrito.length).toBe(2);
-
-        act(() => result.current.vaciarCarrito());
-
-        expect(result.current.carrito.length).toBe(0);
-    });
-
-    it("abre y cierra el carrito con toggleCart", () => {
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-
-        expect(result.current.isCartOpen).toBe(false);
-
-        act(() => result.current.toggleCart());
-        expect(result.current.isCartOpen).toBe(true);
-
-        act(() => result.current.toggleCart());
-        expect(result.current.isCartOpen).toBe(false);
-    });
-
-    it("carga el carrito desde localStorage al iniciar", () => {
-        const savedCart = [{ id: 1, nombre: "Café guardado", precio: 10, quantity: 2 }];
-        localStorage.setItem("carrito", JSON.stringify(savedCart));
-
-        const { result } = renderHook(() => useCarrito(), { wrapper });
-
-        expect(result.current.carrito.length).toBe(1);
-        expect(result.current.carrito[0].nombre).toBe("Café guardado");
-    });
+    act(() => result.current.agregarProducto({ id: 1 }));
+    act(() => result.current.clearCart());
+    expect(result.current.carrito.length).toBe(0);
+  });
 });
