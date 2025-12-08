@@ -1,119 +1,280 @@
+// ==========================================
+// src/tests/components/Navbar.spec.js
+// 100% JASMINE - SIN JEST
+// ==========================================
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { CarritoContext } from "../../context/CarritoContext";
-import { useAuth0 } from "@auth0/auth0-react";
 
-// Mocks necesarios
-jest.mock("@auth0/auth0-react");
-const mockNavigate = jasmine.createSpy("navigate");
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockNavigate
-}));
-
-describe("🧩 Navbar Component (Full Coverage)", () => {
-  let mockContextValues;
-  let mockLogin, mockLogout;
+describe("🧩 Navbar Component", () => {
+  let mockCarrito;
+  let mockNavigate;
+  let mockAuth0;
 
   beforeEach(() => {
-    mockLogin = jasmine.createSpy("loginWithRedirect");
-    mockLogout = jasmine.createSpy("logout");
+    localStorage.clear();
     
-    // Configuración por defecto Auth0
-    useAuth0.mockReturnValue({
-      isAuthenticated: false,
-      loginWithRedirect: mockLogin,
-      logout: mockLogout,
-      user: null,
-    });
-
-    // Configuración por defecto Carrito
-    mockContextValues = {
+    mockNavigate = jasmine.createSpy("navigate");
+    mockCarrito = {
       carrito: [],
-      toggleCart: jasmine.createSpy("toggleCart"),
-      getCartItemsCount: jasmine.createSpy("getCartItemsCount").and.returnValue(0),
-      isCartOpen: false
+      toggleCart: jasmine.createSpy("toggleCart")
+    };
+    
+    mockAuth0 = {
+      isAuthenticated: false,
+      user: null,
+      logout: jasmine.createSpy("logout"),
+      loginWithRedirect: jasmine.createSpy("loginWithRedirect")
     };
   });
 
-  const renderNavbar = () => {
+  const renderNavbar = (authOverride = {}, carritoOverride = {}) => {
+    const auth = { ...mockAuth0, ...authOverride };
+    const carrito = { ...mockCarrito, ...carritoOverride };
+    
     return render(
-      <CarritoContext.Provider value={mockContextValues}>
+      <CarritoContext.Provider value={carrito}>
         <BrowserRouter>
-          <Navbar />
+          <Navbar 
+            navigateHook={mockNavigate}
+            auth0Hook={auth}
+            carritoHook={carrito}
+          />
         </BrowserRouter>
       </CarritoContext.Provider>
     );
   };
 
-  // --- RENDERING BÁSICO ---
-  it("Renderiza logo y links básicos", () => {
+  it("Renderiza logo", () => {
     renderNavbar();
-    expect(screen.getByText(/KAIROS/i)).toBeTruthy();
-    expect(screen.getByText(/Café/i)).toBeTruthy();
+    expect(screen.getByText("Kairos Coffee")).toBeTruthy();
   });
 
-  // --- AUTH0 INTERACCIÓN ---
-  it("Botón Login llama a loginWithRedirect", () => {
-    renderNavbar(); // isAuthenticated = false
-    const btn = screen.getByText(/Iniciar Sesión/i);
-    fireEvent.click(btn);
-    expect(mockLogin).toHaveBeenCalled();
+  it("Renderiza links de navegación", () => {
+    renderNavbar();
+    expect(screen.getByText("Inicio")).toBeTruthy();
+    expect(screen.getByText("Café")).toBeTruthy();
   });
 
-  it("Muestra usuario y Botón Logout llama a logout", () => {
-    useAuth0.mockReturnValue({
-      isAuthenticated: true,
-      user: { name: "Hernan", picture: "pic.jpg" },
-      logout: mockLogout,
-      loginWithRedirect: mockLogin
+  it("Usuario NO autenticado muestra Registrarse", () => {
+    renderNavbar({ isAuthenticated: false });
+    expect(screen.getByText("Registrarse")).toBeTruthy();
+  });
+
+  it("Usuario NO autenticado muestra Iniciar Sesión", () => {
+    renderNavbar({ isAuthenticated: false });
+    expect(screen.getByText("Iniciar Sesión")).toBeTruthy();
+  });
+
+  it("Click en Registrarse navega", () => {
+    renderNavbar();
+    fireEvent.click(screen.getByText("Registrarse"));
+    expect(mockNavigate).toHaveBeenCalledWith("/registro");
+  });
+
+  it("Click en Iniciar Sesión navega", () => {
+    renderNavbar();
+    fireEvent.click(screen.getByText("Iniciar Sesión"));
+    expect(mockNavigate).toHaveBeenCalledWith("/login");
+  });
+
+  it("Usuario autenticado muestra nombre", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: { name: "Juan Pérez" } 
     });
-
-    renderNavbar();
-    
-    // Verificar nombre de usuario o Perfil
-    expect(screen.getByText(/Hola, Hernan/i)).toBeTruthy();
-    
-    // Click Logout
-    const btnLogout = screen.getByText(/Cerrar Sesión/i);
-    fireEvent.click(btnLogout);
-    expect(mockLogout).toHaveBeenCalled();
+    expect(screen.getByText(/Hola, Juan!/)).toBeTruthy();
   });
 
-  // --- CARRITO ---
-  it("Muestra badge con cantidad correcta", () => {
-    mockContextValues.getCartItemsCount.and.returnValue(5);
+  it("Usuario autenticado muestra Mi Perfil", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: { name: "Test" } 
+    });
+    expect(screen.getByText("Mi Perfil")).toBeTruthy();
+  });
+
+  it("Usuario autenticado muestra Cerrar Sesión", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: { name: "Test" } 
+    });
+    expect(screen.getByText("Cerrar Sesión")).toBeTruthy();
+  });
+
+  it("Nombre vacío muestra Usuario", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: { name: "" } 
+    });
+    expect(screen.getByText(/Hola, Usuario!/)).toBeTruthy();
+  });
+
+  it("Sin nombre muestra Usuario", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: {} 
+    });
+    expect(screen.getByText(/Hola, Usuario!/)).toBeTruthy();
+  });
+
+  it("Extrae primer nombre correctamente", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: { name: "María José González" } 
+    });
+    expect(screen.getByText(/Hola, María!/)).toBeTruthy();
+  });
+
+  it("Click en logo navega a home", () => {
     renderNavbar();
+    fireEvent.click(screen.getByText("Kairos Coffee"));
+    expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
+
+  it("Click en Inicio navega", () => {
+    renderNavbar();
+    const inicios = screen.getAllByText("Inicio");
+    fireEvent.click(inicios[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
+
+  it("Click en Café navega con categoría", () => {
+    renderNavbar();
+    const cafes = screen.getAllByText("Café");
+    fireEvent.click(cafes[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/productos?categoria=cafe");
+  });
+
+  it("Click en Cápsulas navega", () => {
+    renderNavbar();
+    fireEvent.click(screen.getAllByText("Cápsulas")[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/productos?categoria=capsulas");
+  });
+
+  it("Click en Accesorios navega", () => {
+    renderNavbar();
+    fireEvent.click(screen.getAllByText("Accesorios")[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/productos?categoria=accesorios");
+  });
+
+  it("Click en Yerba Mate navega", () => {
+    renderNavbar();
+    fireEvent.click(screen.getAllByText("Yerba Mate")[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/productos?categoria=yerba");
+  });
+
+  it("Click en Contáctanos navega", () => {
+    renderNavbar();
+    fireEvent.click(screen.getAllByText("Contáctanos")[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/contacto");
+  });
+
+  it("Carrito vacío muestra 0", () => {
+    renderNavbar({}, { carrito: [] });
+    expect(screen.getByText("0")).toBeTruthy();
+  });
+
+  it("Carrito con items muestra cantidad", () => {
+    renderNavbar({}, { carrito: [{}, {}, {}] });
+    expect(screen.getByText("3")).toBeTruthy();
+  });
+
+  it("Carrito null muestra 0", () => {
+    renderNavbar({}, { carrito: null });
+    expect(screen.getByText("0")).toBeTruthy();
+  });
+
+  it("Click en carrito llama toggleCart", () => {
+    renderNavbar();
+    const cartBtn = screen.getByText("0").closest("button");
+    fireEvent.click(cartBtn);
+    expect(mockCarrito.toggleCart).toHaveBeenCalled();
+  });
+
+  it("Menu inicia cerrado", () => {
+    const { container } = renderNavbar();
+    const nav = container.querySelector("nav");
+    expect(nav.classList.contains("open")).toBe(false);
+  });
+
+  it("Click en hamburguesa abre menu", () => {
+    const { container } = renderNavbar();
+    const hamburguesa = container.querySelector(".nav-toggle");
+    fireEvent.click(hamburguesa);
+    expect(container.querySelector("nav").classList.contains("open")).toBe(true);
+  });
+
+  it("Click en hamburguesa cierra menu", () => {
+    const { container } = renderNavbar();
+    const hamburguesa = container.querySelector(".nav-toggle");
+    fireEvent.click(hamburguesa);
+    fireEvent.click(hamburguesa);
+    expect(container.querySelector("nav").classList.contains("open")).toBe(false);
+  });
+
+  it("Usuario local con accessToken muestra perfil", () => {
+    localStorage.setItem("accessToken", "token123");
+    localStorage.setItem("userData", JSON.stringify({ nombre: "Pedro" }));
+    renderNavbar();
+    expect(screen.getByText(/Hola, Pedro!/)).toBeTruthy();
+  });
+
+  it("Auth local sin nombre usa Usuario", () => {
+    localStorage.setItem("accessToken", "token");
+    localStorage.setItem("userData", JSON.stringify({}));
+    renderNavbar();
+    expect(screen.getByText(/Hola, Usuario!/)).toBeTruthy();
+  });
+
+  it("Click en categoría mobile cierra menu", () => {
+    const { container } = renderNavbar();
+    const hamburguesa = container.querySelector(".nav-toggle");
+    
+    fireEvent.click(hamburguesa);
+    expect(container.querySelector("nav").classList.contains("open")).toBe(true);
+    
+    const cafesMobile = screen.getAllByText("Café");
+    fireEvent.click(cafesMobile[1]);
+    
+    expect(container.querySelector("nav").classList.contains("open")).toBe(false);
+  });
+
+  it("Cerrar sesión llama logout de Auth0", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: { name: "Test" } 
+    });
+    
+    fireEvent.click(screen.getByText("Cerrar Sesión"));
+    expect(mockAuth0.logout).toHaveBeenCalled();
+  });
+
+  it("Carrito con 5 items muestra badge correcto", () => {
+    renderNavbar({}, { carrito: [{},{},{},{},{}] });
     expect(screen.getByText("5")).toBeTruthy();
   });
 
-  it("ToggleCart se llama al clickear la bolsa", () => {
+  it("Multiple categorías navegan correctamente", () => {
     renderNavbar();
-    // Busca por clase o texto, ajusta según tu HTML
-    // Asumiendo que el ícono está cerca del contador
-    const cartContainer = screen.getByText("0").closest('div'); 
-    // O busca un botón genérico si tienes aria-label
-    // const btn = screen.getByLabelText("Carrito");
     
-    if(cartContainer) fireEvent.click(cartContainer);
-    // Si no encuentras el elemento exacto, usa data-testid en el componente real
+    fireEvent.click(screen.getAllByText("Yerba Mate")[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/productos?categoria=yerba");
+    
+    mockNavigate.calls.reset();
+    
+    fireEvent.click(screen.getAllByText("Accesorios")[0]);
+    expect(mockNavigate).toHaveBeenCalledWith("/productos?categoria=accesorios");
   });
 
-  // --- RESPONSIVE / MENU ---
-  it("Abre y cierra menú hamburguesa (Branch Coverage)", () => {
-    renderNavbar();
-    
-    // Busca el input checkbox o el botón del menú
-    // Asumiendo estructura típica de checkbox hack para menú CSS
-    const menuCheckbox = document.querySelector('input[type="checkbox"]');
-    const menuLabel = document.querySelector('.menu-icon') || document.querySelector('label');
-
-    if (menuLabel) {
-      fireEvent.click(menuLabel);
-      // Verifica si cambió alguna clase o estado visual
-      // Si es CSS puro, difícil de probar en JSDOM, pero el evento click cubre la línea.
-    }
+  it("Nombre con múltiples espacios", () => {
+    renderNavbar({ 
+      isAuthenticated: true, 
+      user: { name: "  Juan   Carlos  " } 
+    });
+    expect(screen.getByText(/Hola, Juan!/)).toBeTruthy();
   });
 });
+
