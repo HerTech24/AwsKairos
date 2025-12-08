@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 // src/test-setup.js
 
 // === 1. Configuración base de Testing Library ===
@@ -21,8 +22,7 @@ beforeEach(() => {
 // === 4. Helpers utilitarios ===
 window.testHelpers = {
     flushPromises: () => new Promise((r) => setTimeout(r, 0)),
-    waitForCondition: (cond, timeout = 3000) =>
-        new Promise((resolve, reject) => {
+    waitForCondition: (cond, timeout = 3000) => new Promise((resolve, reject) => {
         const step = 100;
         let t = 0;
         const tick = () => {
